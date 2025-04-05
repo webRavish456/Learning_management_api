@@ -23,37 +23,17 @@ export const postExam = async (req, res) => {
       if (!examName  || !courseName || !teacherName || !examDate || !duration || !testType || !totalMarks) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
-  
-   
-      // const existingExam = await ExamModel.findOne({
-      //   $or: [{ examName }, { courseName }, { teacherName }, { examDate }, { duration }, { testType }, { totalMarks }]
-      // });
+
+      const [day, month, year] = examDate.split("/");
+
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
       
-      // if (existingExam) {
-      //   if (existingExam.examName === examName) {
-      //     return res.status(400).json({ status: "error", message: "Exam Name already exists" });
-      //   }
-      //   if (existingExam.courseName === courseName) {
-      //     return res.status(400).json({ status: "error", message: "Course Name already exists" });
-      //   }
-      //   if (existingExam.teacherName === teacherName) {
-      //       return res.status(400).json({ status: "error", message: "Teacher Name already exists" });
-      //   }
-      //   if (existingExam.examDate === examDate) {
-      //       return res.status(400).json({ status: "error", message: "Exam Date already exists" });
-      //   }
-      //   if (existingExam.duration === duration) {
-      //       return res.status(400).json({ status: "error", message: "Duration already exists" });
-      //   }
-      //   if (existingExam.testType === testType) {
-      //       return res.status(400).json({ status: "error", message: "Test Type already exists" });
-      //   }
-      //   if (existingExam.totalMarks === totalMarks) {
-      //       return res.status(400).json({ status: "error", message: "Total Marks already exists" });
-      //   }
-      // }
-      
-      const newExam = await ExamModel.create({ examName, courseName, teacherName, examDate, duration, testType, totalMarks });
+      const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+     
+      const newExam = await ExamModel.create({ examName, courseName, teacherName, examDate:formattedDate, duration, testType, totalMarks });
 
       res.status(200).json({ status: "success", message: "Exam Detail created successfully!" });
   
@@ -109,12 +89,29 @@ export const getExamById = async (req, res) => {
     if (ContentType && ContentType.includes("multipart/form-data")) {
   
       upload.none()(req, res, async (err) => {
+
         if (err) {
           return res.status(500).json({ status: "error", msg: "Error handling form data" });
         }
-    try {
+
+     try {
+
       const { id } = req.params;
       const updateData = req.body; 
+
+      if(updateData.examDate)
+      {
+        const [day, month, year] = updateData.examDate.split("/");
+
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        
+        const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        updateData.examDate=new Date(formattedDate)
+      }
+
       const updatedExam =  await ExamModel.updateOne({ _id: id }, { $set: updateData });
   
       if (!updatedExam) {
