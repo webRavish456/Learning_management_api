@@ -136,7 +136,7 @@ export const getExamById = async (req, res) => {
       const deletedExam = await ExamModel.deleteOne({ _id: id });
        
       if (deletedExam.deletedCount === 0) {
-        return res.status(404).json({ status: "error", message: "Exam Details not found" });
+        return res.status(404).json({ status: "error", message: "Exam Details are not found" });
       }
   
       res.status(200).json({ status: "success", message: "Exam Details deleted successfully" });
