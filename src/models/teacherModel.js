@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const teacherSchema = new mongoose.Schema(
   {
+   
     teacherName: {
       type: String,
       required: true,
@@ -11,7 +12,7 @@ const teacherSchema = new mongoose.Schema(
       required: true,
     },
     dob: {
-      type: String,
+      type: Date,
       required: true,
     },
     mobileNumber: {
@@ -78,7 +79,7 @@ const teacherSchema = new mongoose.Schema(
         required: true,
       },
       accountNumber: {
-        type: String,
+        type: Number,
         required: true,
       },
       bankName: {
