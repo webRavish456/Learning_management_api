@@ -6,7 +6,7 @@ import { deleteExam, getExam, getExamById, postExam, updateExam } from '../contr
 import { postTeacher } from '../controllers/teacherControllers.js';
 import { deletedResult, getResult, getResultById, postResult, updatedResult } from '../controllers/resultControllers.js';
 
-import { deleteTeacher, getTeacher, getTeacherById, postTeacher, updateTeacher } from '../controllers/teacherControllers.js';
+import { deleteTeacher, getTeacher, getTeacherById, updateTeacher } from '../controllers/teacherControllers.js';
 import uploadTeacher from '../upload/teacher.js';
 
 
@@ -39,7 +39,7 @@ router.route('/result/:id').get(getResultById);
 router.route('/result/:id').patch(updatedResult);
 router.route('/result/:id').delete(deletedResult);
 
-router.route('/teacher').post(postTeacher);
+//  router.route('/teacher').post(postTeacher);
 /* teacher */
 
 router.route('/teacher').post(uploadTeacher, postTeacher);
