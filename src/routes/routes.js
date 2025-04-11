@@ -9,6 +9,14 @@ import { deletedResult, getResult, getResultById, postResult, updatedResult } fr
 import { deleteTeacher, getTeacher, getTeacherById, updateTeacher } from '../controllers/teacherControllers.js';
 import uploadTeacher from '../upload/teacher.js';
 
+import { deleteAllStudents, getAllStudents, getAllStudentsById, postAllStudents, updateAllStudents } from '../controllers/allstudentsControllers.js';
+
+import { deleteCertificates, getCertificates, getCertificatesById, postCertificates, updateCertificates } from '../controllers/certificatesControllers.js';
+
+import { deleteTimetable, getTimetable, getTimetableById, postTimetable, updateTimetable } from '../controllers/timetableControllers.js';
+
+import uploadCertificates from '../upload/certificates.js';
+
 
 export const router = express.Router();
 
@@ -47,3 +55,21 @@ router.route('/teacher').get(getTeacher);
 router.route('/teacher/:id').get(getTeacherById);
 router.route('/teacher/:id').patch(uploadTeacher, updateTeacher);
 router.route('/teacher/:id').delete(deleteTeacher);
+
+router.route('/allstudents').post(postAllStudents)
+router.route('/allstudents').get(getAllStudents)
+router.route('/allstudents/:id').get(getAllStudentsById)
+router.route('/allstudents/:id').patch(updateAllStudents)
+router.route('/allstudents/:id').delete(deleteAllStudents)
+
+router.route('/certificates').post(uploadCertificates, postCertificates)
+router.route('/certificates').get(getCertificates)
+router.route('/certificates/:id').get(getCertificatesById)
+router.route('/certificates/:id').patch(updateCertificates)
+router.route('/certificates/:id').delete(deleteCertificates)
+
+router.route('/timetable').post(postTimetable)
+router.route('/timetable').get(getTimetable)
+router.route('/timetable/:id').get(getTimetableById)
+router.route('/timetable/:id').patch(updateTimetable)
+router.route('/timetable/:id').delete(deleteTimetable)
