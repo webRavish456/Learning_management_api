@@ -1,5 +1,4 @@
-import multer from "multer";
-import CourseListModel from "../models/courselistmodel.js";
+import CourseListModel from "../models/courseListModel.js"
 
 
 export const postCourselist = async (req, res) => {
