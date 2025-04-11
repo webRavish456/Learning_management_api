@@ -21,7 +21,7 @@ export const postTeacher = async (req, res) => {
           companyDetails,
           bankDetails
         } = req.body;
-      
+    
    
    const parsedBankDetails = JSON.parse(bankDetails);
 
