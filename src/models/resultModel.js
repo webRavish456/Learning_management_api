@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const examSchema = new mongoose.Schema(
+const resultSchema = new mongoose.Schema(
    
   {
     examName: { 
@@ -18,23 +18,13 @@ const examSchema = new mongoose.Schema(
       required: true,
     },
   
-    examDate: { 
-      type: Date, 
-      required: true,
-    },
-  
-    duration: {
-      type: String, 
-      required: true,
-    },
-  
     testType: { 
       type: String, 
       required: true,
     },
   
-    totalMarks: { 
-      type: Number, 
+    resultDate: { 
+      type: Date, 
       required: true,
     },
   
@@ -48,6 +38,6 @@ const examSchema = new mongoose.Schema(
   
 );
 
-const ExamModel = mongoose.model('Exam', examSchema);
+const ResultModel = mongoose.model('Result', resultSchema);
 
-export default ExamModel
+export default ResultModel
