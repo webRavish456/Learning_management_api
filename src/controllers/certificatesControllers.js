@@ -78,10 +78,17 @@ export const getCertificatesById = async (req, res) => {
   
     if (ContentType && ContentType.includes("multipart/form-data")) {
   
-      
+    
     try {
       const { id } = req.params;
       const updateData = req.body; 
+
+      if (req.imageUrls?.image) {
+        updateData.certificates = req.imageUrls.image;
+      }
+
+      console.log(id, updateData)
+
       const updatedCertificates =  await CertificatesModel.updateOne({ _id: id }, { $set: updateData });
   
       if (!updatedCertificates) {

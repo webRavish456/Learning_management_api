@@ -147,11 +147,9 @@ export const getTeacherById = async (req, res) => {
 
     if (ContentType && ContentType.includes("multipart/form-data")) {
 
-    upload.none()(req, res, async (err) => {
+   
 
-      if (err) {
-        return res.status(500).json({ status: "error", msg: "Error handling form data" });
-      }
+   
 
       try {
 
@@ -226,7 +224,7 @@ export const getTeacherById = async (req, res) => {
     console.error("Error updating teacher:", error);
     res.status(500).json({ status: "error", message: "Internal server error" });
    }
- })
+
   }
 };
 

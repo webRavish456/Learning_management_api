@@ -65,7 +65,7 @@ router.route('/allstudents/:id').delete(deleteAllStudents)
 router.route('/certificates').post(uploadCertificates, postCertificates)
 router.route('/certificates').get(getCertificates)
 router.route('/certificates/:id').get(getCertificatesById)
-router.route('/certificates/:id').patch(updateCertificates)
+router.route('/certificates/:id').patch(uploadCertificates, updateCertificates)
 router.route('/certificates/:id').delete(deleteCertificates)
 
 router.route('/timetable').post(postTimetable)
