@@ -62,6 +62,8 @@ export const postTeacher = async (req, res) => {
         $or: [{ mobileNumber }, { emailId }]
       });
       
+
+      
       if (existingData) {
         if (existingData.emailId === emailId) {
           return res.status(400).json({ status: "error", message: " Email Id already exists" });
