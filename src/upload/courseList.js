@@ -53,7 +53,7 @@ const uploadCourse = (req, res, next) => {
 
     if (Object.keys(imageUrls).length > 0) {
       req.imageUrls = imageUrls;
-   
+     
     }
 
     next();
