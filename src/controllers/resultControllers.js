@@ -33,7 +33,7 @@ export const postResult = async (req, res) => {
       
       // const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
      
-      const newResult = await ResultModel.create({ examName, courseName, teacherName, testType, resultDate:formattedDate });
+      const newResult = await ResultModel.create({ examName, courseName, teacherName, testType, resultDate });
 
       res.status(200).json({ status: "success", message: "Result Detail created successfully!" });
   
