@@ -24,14 +24,14 @@ export const postResult = async (req, res) => {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
-      const [day, month, year] = resultDate.split("/");
+      // const [day, month, year] = resultDate.split("/");
 
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
+      // const now = new Date();
+      // const hours = now.getHours();
+      // const minutes = now.getMinutes();
+      // const seconds = now.getSeconds();
       
-      const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      // const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
      
       const newResult = await ResultModel.create({ examName, courseName, teacherName, testType, resultDate:formattedDate });
 
@@ -99,18 +99,18 @@ export const getResultById = async (req, res) => {
       const { id } = req.params;
       const updateData = req.body; 
 
-      if(updateData.resultDate)
-      {
-        const [day, month, year] = updateData.resultDate.split("/");
+      // if(updateData.resultDate)
+      // {
+      //   const [day, month, year] = updateData.resultDate.split("/");
 
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
+      //   const now = new Date();
+      //   const hours = now.getHours();
+      //   const minutes = now.getMinutes();
+      //   const seconds = now.getSeconds();
         
-        const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        updateData.resultDate=new Date(formattedDate)
-      }
+      //   const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      //   updateData.resultDate=new Date(formattedDate)
+      // }
 
       const updatedResult =  await ResultModel.updateOne({ _id: id }, { $set: updateData });
   
