@@ -26,8 +26,6 @@ const studentsAssignmentSchema = new mongoose.Schema(
           
           },
 
-      
-
         Status: { 
             type: String, 
             default:"active"
