@@ -34,7 +34,7 @@ export const router = express.Router();
 
 /* verifyToken */
 
-router.route('/login').post(postAdmin);
+router.route('/login').post(postAdmin);     //generate token or expire date
 router.route('/forgot').post(postForgot);
 
 /* branch */
