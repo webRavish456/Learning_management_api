@@ -24,16 +24,16 @@ export const postExam = async (req, res) => {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
-      const [day, month, year] = examDate.split("/");
+      // const [day, month, year] = examDate.split("/");
 
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
+      // const now = new Date();
+      // const hours = now.getHours();
+      // const minutes = now.getMinutes();
+      // const seconds = now.getSeconds();
       
-      const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      // const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
      
-      const newExam = await ExamModel.create({ examName, courseName, teacherName, examDate:formattedDate, duration, testType, totalMarks });
+      const newExam = await ExamModel.create({ examName, courseName, teacherName, examDate, duration, testType, totalMarks });
 
       res.status(200).json({ status: "success", message: "Exam Detail created successfully!" });
   
@@ -99,18 +99,18 @@ export const getExamById = async (req, res) => {
       const { id } = req.params;
       const updateData = req.body; 
 
-      if(updateData.examDate)
-      {
-        const [day, month, year] = updateData.examDate.split("/");
+      // if(updateData.examDate)
+      // {
+      //   // const [day, month, year] = updateData.examDate.split("/");
 
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
+      //   // const now = new Date();
+      //   // const hours = now.getHours();
+      //   // const minutes = now.getMinutes();
+      //   // const seconds = now.getSeconds();
         
-        const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        updateData.examDate=new Date(formattedDate)
-      }
+      //   // const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      //   // updateData.examDate=new Date(formattedDate)
+      // }
 
       const updatedExam =  await ExamModel.updateOne({ _id: id }, { $set: updateData });
   
