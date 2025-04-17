@@ -26,6 +26,7 @@ import { deleteTimetable, getTimetable, getTimetableById, postTimetable, updateT
 import uploadCertificates from '../upload/certificates.js';
 import verifyToken from '../middleware/auth.js';
 import { postAdmin, postForgot } from '../controllers/authControllers.js';
+import { deleteStudentresult, getStudentresult, getStudentresultById, postStudentresult, updateStudentresult } from '../controllers/studentresultControllers.js';
 
 
 
@@ -91,6 +92,13 @@ router.route('/result').get(verifyToken, getResult);
 router.route('/result/:id').get(verifyToken, getResultById);
 router.route('/result/:id').patch(verifyToken, updatedResult);
 router.route('/result/:id').delete(verifyToken, deletedResult);
+
+/* student result*/ 
+router.route('/studentresult').post(verifyToken, postStudentresult);
+router.route('/studentresult').get(verifyToken, getStudentresult);
+router.route('/studentresult/:id').get(verifyToken, getStudentresultById);
+router.route('/studentresult/:id').patch(verifyToken, updateStudentresult);
+router.route('/studentresult/:id').delete(verifyToken, deleteStudentresult);
 
 
 /* teacher */
