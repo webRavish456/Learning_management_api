@@ -93,8 +93,8 @@ export const getDocumentsharingById = async (req, res) => {
       const { id } = req.params;
       const updateData = req.body; 
 
-      if(req.imageUrls.image) {
-        updateData.document=req.imageUrls.image
+      if(req.imageUrls) {
+        updateData.document=req.imageUrls?.image
       }
 
     //   if(updateData.pricing)
