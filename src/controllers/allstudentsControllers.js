@@ -18,7 +18,7 @@ export const postAllStudents = async (req, res) => {
   
     try {
   
-      const { studentName, gender, mobileNumber, emailId, dob, address, enrollmentDate,course,status} = req.body;
+      const { studentName, gender, mobileNumber, emailId, dob, address, enrollmentDate,course} = req.body;
   
       if (!studentName  || !gender || !mobileNumber || !emailId || !dob || !address || !enrollmentDate|| !course) {
         return res.status(400).json({ status: "error", message: "All fields are required" });

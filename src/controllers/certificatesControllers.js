@@ -16,7 +16,7 @@ export const postCertificates = async (req, res) => {
   
       const { studentName, courseName, duration} = req.body;
   
-      if (!studentName  || !courseName || !duration) {
+      if (!studentName  || !courseName || !duration || !req.imageUrls?.image) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 

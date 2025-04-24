@@ -95,10 +95,10 @@ router.route('/result/:id').delete(verifyToken, deletedResult);
 
 /* student result*/ 
 router.route('/studentresult').post(verifyToken, postStudentresult);
-router.route('/studentresult').get(verifyToken, getStudentresult);
-router.route('/studentresult/:id').get(verifyToken, getStudentresultById);
-router.route('/studentresult/:id').patch(verifyToken, updateStudentresult);
-router.route('/studentresult/:id').delete(verifyToken, deleteStudentresult);
+router.route('/studentresult/:examId').get(verifyToken, getStudentresult);
+router.route('/studentresult/:id/:examId').get(verifyToken, getStudentresultById);
+router.route('/studentresult/:id/:examId').patch(verifyToken, updateStudentresult);
+router.route('/studentresult/:id/:examId').delete(verifyToken, deleteStudentresult);
 
 
 /* teacher */
