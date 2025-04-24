@@ -27,6 +27,7 @@ import uploadCertificates from '../upload/certificates.js';
 import verifyToken from '../middleware/auth.js';
 import { postAdmin, postForgot } from '../controllers/authControllers.js';
 import { deleteStudentresult, getStudentresult, getStudentresultById, postStudentresult, updateStudentresult } from '../controllers/studentresultControllers.js';
+import uploadStudentresult from '../upload/studentresult.js';
 
 
 
@@ -94,11 +95,11 @@ router.route('/result/:id').patch(verifyToken, updatedResult);
 router.route('/result/:id').delete(verifyToken, deletedResult);
 
 /* student result*/ 
-router.route('/studentresult').post(verifyToken, postStudentresult);
-router.route('/studentresult/:examId').get(verifyToken, getStudentresult);
-router.route('/studentresult/:id/:examId').get(verifyToken, getStudentresultById);
-router.route('/studentresult/:id/:examId').patch(verifyToken, updateStudentresult);
-router.route('/studentresult/:id/:examId').delete(verifyToken, deleteStudentresult);
+router.route('/studentresult').post(verifyToken, uploadStudentresult, postStudentresult);
+router.route('/studentresult/:resultId').get(verifyToken, getStudentresult);
+router.route('/studentresult/:id/:resultId').get(verifyToken, getStudentresultById);
+router.route('/studentresult/:id/:resultId').patch(verifyToken, uploadStudentresult, updateStudentresult);
+router.route('/studentresult/:id/:resultId').delete(verifyToken, deleteStudentresult);
 
 
 /* teacher */

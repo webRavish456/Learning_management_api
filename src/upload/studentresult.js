@@ -48,7 +48,7 @@ const uploadStudentresult = (req, res, next) => {
     const imageUrls = {};
 
     if (files && files['sheet'] && files['sheet'][0]) {
-      imageUrls.image = files['sgeet'][0].path;
+      imageUrls.image = files['sheet'][0].path;
     }
 
     if (Object.keys(imageUrls).length > 0) {

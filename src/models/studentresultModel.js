@@ -7,8 +7,8 @@ const studentresultSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    examId: {
-      type: Number,
+   resultId: {
+      type: String,
       required:true
     },
     courseName: {

@@ -13,16 +13,16 @@ export const postStudentresult= async (req, res) => {
   
     try {
   
-      const { studentName, examId, courseName, marksObtained, totalMarks, passingMarks, status} = req.body;
+      const { studentName, resultId, courseName, marksObtained, totalMarks, passingMarks, status} = req.body;
   
-      if (!studentName  || examId || !courseName || !marksObtained || !totalMarks || !passingMarks || !status || !req.imageUrls?.image) {
+
+      if (!studentName  || !resultId || !courseName || !marksObtained || !totalMarks || !passingMarks || !status || !req.imageUrls?.image) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
-    
-    const sheet = req.imageUrls?.image || null;
+     const sheet = req.imageUrls?.image || null;
 
-      const newStudentresult = await StudentresultModel.create({ studentName, courseName,marksObtained, totalMarks, passingMarks, sheet, status, examId });
+      const newStudentresult = await StudentresultModel.create({ studentName, courseName,marksObtained, totalMarks, passingMarks, sheet, status, resultId });
 
       res.status(200).json({ status: "success", message: "Studentresult created successfully!" });
   
@@ -30,8 +30,7 @@ export const postStudentresult= async (req, res) => {
       console.error("Error creating studentresult:", error);
       res.status(500).json({ status: "error", message: "Internal server error" });
     }
-    
-    
+  
   }
   
   };
@@ -40,9 +39,9 @@ export const postStudentresult= async (req, res) => {
   export const getStudentresult = async (req, res) => {
 
     try {
-       const { examId } = req.params; 
+       const { resultId } = req.params; 
 
-      const studentresult = await StudentresultModel.find({examId});
+      const studentresult = await StudentresultModel.find({resultId});
   
       if (studentresult.length === 0) {
         return res.status(404).json({ status: "error", message: "Student Result not found" });
@@ -59,9 +58,9 @@ export const postStudentresult= async (req, res) => {
 
 export const getStudentresultById = async (req, res) => {
     try {
-      const { id, examId } = req.params; 
+      const { id, resultId } = req.params; 
 
-      const studentresult = await StudentresultModel.findOne({ _id: id, examId: examId });
+      const studentresult = await StudentresultModel.findOne({ _id: id, resultId: resultId });
   
       if (!studentresult) {
         return res.status(404).json({ status: "error", message: "Student Result not found" });
@@ -84,7 +83,7 @@ export const getStudentresultById = async (req, res) => {
     
     try {
 
-      const {  id, examId } = req.params; 
+      const {  id, resultId } = req.params; 
   
       const updateData = req.body; 
 
@@ -93,7 +92,7 @@ export const getStudentresultById = async (req, res) => {
       }
 
 
-      const updatedStudentresult =  await StudentresultModel.updateOne({ _id: id, examId: examId }, { $set: updateData });
+      const updatedStudentresult =  await StudentresultModel.updateOne({ _id: id, resultId: resultId }, { $set: updateData });
   
       if (!updatedStudentresult) {
         return res.status(404).json({ status: "error", message: "Student Result not found" });
@@ -113,9 +112,9 @@ export const getStudentresultById = async (req, res) => {
   export const deleteStudentresult = async (req, res) => {
     
     try {
-      const { id, examId } = req.params;
+      const { id, resultId } = req.params;
   
-      const deletedStudentresult = await StudentresultModel.deleteOne({ _id: id, examId: examId});
+      const deletedStudentresult = await StudentresultModel.deleteOne({ _id: id, resultId:resultId});
        
       if (deletedStudentresult.deletedCount === 0) {
         return res.status(404).json({ status: "error", message: "Student Result not found" });
