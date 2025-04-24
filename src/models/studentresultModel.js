@@ -7,6 +7,12 @@ const studentresultSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    studentId: {
+      type: String,
+      required:true
+    },
+
    resultId: {
       type: String,
       required:true

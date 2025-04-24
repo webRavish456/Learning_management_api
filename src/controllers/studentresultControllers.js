@@ -1,9 +1,7 @@
-import multer from "multer";
 import StudentresultModel from "../models/studentresultModel.js";
+import AllStudentsModel from "../models/allstudentsModels.js";
 
-const storage = multer.memoryStorage();
 
-const upload = multer({ storage: storage });
 
 export const postStudentresult= async (req, res) => {
 
@@ -13,16 +11,31 @@ export const postStudentresult= async (req, res) => {
   
     try {
   
-      const { studentName, resultId, courseName, marksObtained, totalMarks, passingMarks, status} = req.body;
+     const { studentName, studentId, resultId, courseName, marksObtained, totalMarks, passingMarks, status} = req.body;
   
+     const existingStudent= await AllStudentsModel.findOne({_id:studentId})
 
-      if (!studentName  || !resultId || !courseName || !marksObtained || !totalMarks || !passingMarks || !status || !req.imageUrls?.image) {
+     const existingResult = await StudentresultModel.findOne({studentId})
+
+     if(!existingStudent)
+     {
+       return res.status(400).json({ status: "error", message: "Student not found." });
+     }
+
+     if (existingResult) {
+      return res.status(400).json({ 
+        status: "error", 
+        message: "Result already exists." 
+      });
+    }
+
+      if (!studentName  || !resultId || !courseName || !marksObtained || !totalMarks || !passingMarks || !status || !studentId || !req.imageUrls?.image) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
      const sheet = req.imageUrls?.image || null;
 
-      const newStudentresult = await StudentresultModel.create({ studentName, courseName,marksObtained, totalMarks, passingMarks, sheet, status, resultId });
+      const newStudentresult = await StudentresultModel.create({ studentName, courseName,marksObtained, totalMarks, passingMarks, sheet, status, resultId, studentId });
 
       res.status(200).json({ status: "success", message: "Studentresult created successfully!" });
   
