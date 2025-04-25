@@ -21,7 +21,7 @@ const studentsAssignmentSchema = new mongoose.Schema(
         },
 
         dueDate: { 
-            type:String, 
+            type:Date, 
             required: true, 
           
           },
@@ -33,7 +33,7 @@ const studentsAssignmentSchema = new mongoose.Schema(
 
         status: { 
             type: String, 
-            default:"Active"
+            required: true
           },
          
     },

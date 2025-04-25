@@ -12,20 +12,12 @@ export const postCourselist = async (req, res) => {
   
       const { courseName, courseDescription, duration, pricing} = req.body;
   
-      if (!courseName || !courseDescription ||  !duration || !pricing) {
+      if (!courseName || !courseDescription ||  !duration || !pricing || !req.imageUrls?.image) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
       const syllabus =  req.imageUrls?.image || null
 
-    //   const [day, month, year] = examDate.split("/");
-
-    //   const now = new Date();
-    //   const hours = now.getHours();
-    //   const minutes = now.getMinutes();
-    //   const seconds = now.getSeconds();
-      
-    //   const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
      
       const newCourselist = await CourseListModel.create({ courseName, courseDescription, duration, pricing, syllabus });
 
@@ -35,7 +27,6 @@ export const postCourselist = async (req, res) => {
       console.error("Error creating courselist:", error);
       res.status(500).json({ status: "error", message: "Internal server error" });
     }
-    
     
   }
   
@@ -83,9 +74,6 @@ export const getCourselistById = async (req, res) => {
     if (ContentType && ContentType.includes("multipart/form-data")) {
   
    
-
-    
-
      try {
 
       const { id } = req.params;
@@ -94,19 +82,6 @@ export const getCourselistById = async (req, res) => {
       if(req.imageUrls?.image) {
         updateData.syllabus=req.imageUrls?.image
       }
-
-    //   if(updateData.pricing)
-    //   {
-    //     const [day, month, year] = updateData.examDate.split("/");
-
-    //     const now = new Date();
-    //     const hours = now.getHours();
-    //     const minutes = now.getMinutes();
-    //     const seconds = now.getSeconds();
-        
-    //     const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    //     updateData.examDate=new Date(formattedDate)
-    //   }
 
       const updatedCourselist =  await CourseListModel.updateOne({ _id: id }, { $set: updateData });
   

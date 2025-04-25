@@ -18,12 +18,14 @@ const documentSharingSchema = new mongoose.Schema(
       type: String, 
       required: true,
     },
+
     document: {
         type: String, 
     },
+
     status: { 
       type: String, 
-      default: "active",
+      default: "Active",
     },
   },
 

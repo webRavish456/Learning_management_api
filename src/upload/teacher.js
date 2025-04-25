@@ -50,8 +50,6 @@ const uploadTeacher = (req, res, next) => {
 
     const files = req.files;
 
-    const imageUrls = {};
-
     if (
       files?.['documents.resumeCertificate']?.[0] &&
       files?.['documents.highestQualificationCertificate']?.[0] &&
@@ -66,13 +64,7 @@ const uploadTeacher = (req, res, next) => {
       };
     
       req.imageUrls = imageUrls;
-    } else {
-
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required.",
-      });
-    }
+    } 
     
 
     next();

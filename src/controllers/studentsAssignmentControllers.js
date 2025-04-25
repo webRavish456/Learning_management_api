@@ -18,17 +18,17 @@ export const postStudentsAssignment = async (req, res) => {
   
     try {
   
-      const { assignmentTitle, course, teacher, dueDate,mobileNumber} = req.body;
+      const { assignmentTitle, course, teacher, dueDate,mobileNumber, status} = req.body;
   
-      if (!assignmentTitle  || !course || !teacher || !dueDate || !mobileNumber ) {
+      if (!assignmentTitle  || !course || !teacher || !dueDate || !mobileNumber || status ) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
     
      
-      const newStudentsAssignment = await studentsAssignmentModel.create({ assignmentTitle, course, teacher, dueDate,mobileNumber });
+      const newStudentsAssignment = await studentsAssignmentModel.create({ assignmentTitle, course, teacher, dueDate,mobileNumber, status });
 
-      res.status(200).json({ status: "success", message: "studentsAssignment Detail created successfully!" });
+      res.status(200).json({ status: "success", message: "students Assignment Detail created successfully!" });
   
     } catch (error) {
       console.error("Error creating studentsAssignment:", error);
@@ -46,12 +46,12 @@ export const postStudentsAssignment = async (req, res) => {
       const studentsAssignments = await studentsAssignmentModel.find();
   
       if (studentsAssignments.length === 0) {
-        return res.status(404).json({ status: "error", message: "StudentsAssignment Details not found" });
+        return res.status(404).json({ status: "error", message: "Students Assignment Details not found" });
       }
   
       res.status(200).json({ status: "success", data: studentsAssignments });
     } catch (error) {
-      console.error("Error fetching studentsAssignment:", error);
+      console.error("Error fetching students Assignment:", error);
       res.status(500).json({ status: "error", message: "Internal server error" });
     }
   };
@@ -64,12 +64,12 @@ export const getStudentsAssignmentById = async (req, res) => {
       const studentsAssignment = await studentsAssignmentModel.findById(id); 
   
       if (!studentsAssignment) {
-        return res.status(404).json({ status: "error", message: "StudentsAssignments Details not found" });
+        return res.status(404).json({ status: "error", message: "Students Assignments Details not found" });
       }
   
       res.status(200).json({ status: "success", data:studentsAssignment});
     } catch (error) {
-      console.error("Error fetching studentsAssignment:", error);
+      console.error("Error fetching students Assignment:", error);
       res.status(500).json({ status: "error", message: "Internal server error" });
     }
   };
@@ -92,26 +92,13 @@ export const getStudentsAssignmentById = async (req, res) => {
       const { id } = req.params;
       const updateData = req.body; 
 
-      if(updateData.dueDate)
-      {
-        const [day, month, year] = updateData.dueDate.split("/");
-
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
-        
-        const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        updateData.dueDate=new Date(formattedDate)
-      }
-
       const updatedStudentsAssignment =  await studentsAssignmentModel.updateOne({ _id: id }, { $set: updateData });
   
       if (!updatedStudentsAssignment) {
-        return res.status(404).json({ status: "error", message: "StudentsAssignment Details not found" });
+        return res.status(404).json({ status: "error", message: "Students Assignment Details not found" });
       }
   
-      res.status(200).json({ status: "success", message: "StudentsAssignment Details updated successfully"});
+      res.status(200).json({ status: "success", message: "Students Assignment Details updated successfully"});
 
     } catch (error) {
       console.error("Error updating studentsAssignment:", error);
@@ -129,10 +116,10 @@ export const getStudentsAssignmentById = async (req, res) => {
       const deletedStudentsAssignment= await studentsAssignmentModel.deleteOne({ _id: id });
        
       if (deletedStudentsAssignment.deletedCount === 0) {
-        return res.status(404).json({ status: "error", message: "StudentsAssignment Details are not found" });
+        return res.status(404).json({ status: "error", message: "Students Assignment Details are not found" });
       }
   
-      res.status(200).json({ status: "success", message: "StudentsAssignment Details deleted successfully" });
+      res.status(200).json({ status: "success", message: "Students Assignment Details deleted successfully" });
     } catch (error) {
       console.error("Error deleting studentsAssignment:", error);
       res.status(500).json({ status: "error", message: "Internal server error" });

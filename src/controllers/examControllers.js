@@ -18,9 +18,9 @@ export const postExam = async (req, res) => {
   
     try {
   
-      const { examName, courseName, teacherName, examDate, duration, testType, totalMarks} = req.body;
+      const { examName, courseName, teacherName, examDate, duration, testType, totalMarks, status} = req.body;
   
-      if (!examName  || !courseName || !teacherName || !examDate || !duration || !testType || !totalMarks) {
+      if (!examName  || !courseName || !teacherName || !examDate || !duration || !testType || !totalMarks || !status) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
@@ -33,7 +33,7 @@ export const postExam = async (req, res) => {
       
       // const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
      
-      const newExam = await ExamModel.create({ examName, courseName, teacherName, examDate, duration, testType, totalMarks });
+      const newExam = await ExamModel.create({ examName, courseName, teacherName, examDate, duration, testType, totalMarks, status });
 
       res.status(200).json({ status: "success", message: "Exam Detail created successfully!" });
   

@@ -8,28 +8,42 @@ const studentresultSchema = new mongoose.Schema(
       required: true,
     },
 
+    studentId: {
+      type: String,
+      required:true
+    },
+
+   resultId: {
+      type: String,
+      required:true
+    },
     courseName: {
       type: String,
       required: true
     },
+
     marksObtained: {
-      type: String,
+      type: Number,
       required: true
     },
+
     totalMarks: {
-        type: String,
+        type: Number,
         required: true
       },
+
     passingMarks: {
-        type: String,
+        type: Number,
         required: true
       },
+      
     sheet: {
       type: String,
     },
+
     status: {
       type: String,
-      default: "active"
+      required:true
     }
   },
 

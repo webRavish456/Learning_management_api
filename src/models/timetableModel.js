@@ -6,7 +6,6 @@ const timetableSchema = new mongoose.Schema(
     courseName: {
       type: String,
       required: true,
-      // unique: true,
     },
 
     teacherName: {
@@ -27,7 +26,7 @@ const timetableSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "active"
+      default: "Scheduled"
     },
   },
 
