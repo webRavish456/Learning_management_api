@@ -20,7 +20,7 @@ export const postAllAssignment = async (req, res) => {
   
       const { assignmentTitle, course, teacher, dueDate, totalCompletion} = req.body;
   
-      if (!assignmentTitle  || !course || !teacher || !dueDate || !totalCompletion ) {
+      if (!assignmentTitle  || !course || !teacher || !dueDate || !totalCompletion) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
@@ -33,7 +33,7 @@ export const postAllAssignment = async (req, res) => {
       
       // const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
      
-      const newAllAssignment = await AllAssignmentModel.create({ assignmentTitle, course, teacher, dueDate, totalCompletion });
+      const newAllAssignment = await AllAssignmentModel.create({ assignmentTitle, course, teacher, dueDate, totalCompletion ,Status});
 
       res.status(200).json({ status: "success", message: "allAssignment Detail created successfully!" });
   

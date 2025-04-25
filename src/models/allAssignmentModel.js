@@ -32,9 +32,9 @@ const allAssignmentSchema = new mongoose.Schema(
           
           },
 
-        Status: { 
+        status: { 
             type: String, 
-            default:"active"
+            default:"Active"
           },
          
     },

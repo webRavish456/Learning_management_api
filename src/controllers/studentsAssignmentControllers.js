@@ -18,22 +18,15 @@ export const postStudentsAssignment = async (req, res) => {
   
     try {
   
-      const { assignmentTitle, course, teacher, dueDate} = req.body;
+      const { assignmentTitle, course, teacher, dueDate,mobileNumber} = req.body;
   
-      if (!assignmentTitle  || !course || !teacher || !dueDate  ) {
+      if (!assignmentTitle  || !course || !teacher || !dueDate || !mobileNumber ) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
-      const [day, month, year] =dueDate.split("/");
-
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
-      
-      const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    
      
-      const newStudentsAssignment = await studentsAssignmentModel.create({ assignmentTitle, course, teacher, dueDate:formattedDate });
+      const newStudentsAssignment = await studentsAssignmentModel.create({ assignmentTitle, course, teacher, dueDate,mobileNumber });
 
       res.status(200).json({ status: "success", message: "studentsAssignment Detail created successfully!" });
   
