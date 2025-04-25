@@ -7,6 +7,7 @@ const courseListSchema = new mongoose.Schema(
     courseName: { 
       type: String, 
       required: true,
+      unique:true
     },
   
     courseDescription: { 
