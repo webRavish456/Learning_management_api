@@ -6,7 +6,6 @@ const timetableSchema = new mongoose.Schema(
     courseName: {
       type: String,
       required: true,
-      // unique: true,
     },
 
     teacherName: {

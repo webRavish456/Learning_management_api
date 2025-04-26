@@ -14,7 +14,7 @@ const allstudentsSchema = new mongoose.Schema(
       required: true
     },
     mobileNumber: {
-      type: String,
+      type: Number,
       required: true,
       unique: true
     },
@@ -24,7 +24,7 @@ const allstudentsSchema = new mongoose.Schema(
       unique: true
     },
     dob: {
-      type: String,
+      type: Date,
       required: true
     },
     address: {
@@ -32,7 +32,7 @@ const allstudentsSchema = new mongoose.Schema(
       required: true
     },
     enrollmentDate: {
-      type: String,
+      type: Date,
       required: true
     },
     course: {
