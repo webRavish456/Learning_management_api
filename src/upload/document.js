@@ -56,6 +56,7 @@ const uploadDocument = (req, res, next) => {
     }
 
     next();
+    
   });
 };
 

@@ -15,7 +15,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
     return {
-      folder: 'teacherCertificate',
+      folder: 'sheetImage',
       resource_type: 'auto',
       allowedFormats: [
         'jpeg', 'jpg', 'png', 'gif', 'svg', 'webp', 'bmp', 'tiff', 'jfif',
@@ -26,19 +26,14 @@ const storage = new CloudinaryStorage({
   },
 });
 
-
-
 const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 },
 }).fields([
-  { name: 'documents.resumeCertificate', maxCount: 1 },  
-  { name: 'documents.highestQualificationCertificate', maxCount: 1 }, 
-  { name: 'documents.panCard', maxCount: 1 }, 
-  { name: 'documents.aadharCard', maxCount: 1 }, 
+  { name: 'sheet', maxCount: 1 },  
 ]);
 
-const uploadTeacher = (req, res, next) => {
+const uploadStudentresult = (req, res, next) => {
   upload(req, res, async (err) => {
     if (err) {
       console.error('Multer error:', err);
@@ -50,25 +45,18 @@ const uploadTeacher = (req, res, next) => {
 
     const files = req.files;
 
-    if (
-      files?.['documents.resumeCertificate']?.[0] &&
-      files?.['documents.highestQualificationCertificate']?.[0] &&
-      files?.['documents.panCard']?.[0] &&
-      files?.['documents.aadharCard']?.[0]
-    ) {
-      const imageUrls = {
-        resumeCertificate: files['documents.resumeCertificate'][0].path,
-        highestQualificationCertificate: files['documents.highestQualificationCertificate'][0].path,
-        panCard: files['documents.panCard'][0].path,
-        aadharCard: files['documents.aadharCard'][0].path,
-      };
-    
+    const imageUrls = {};
+
+    if (files && files['sheet'] && files['sheet'][0]) {
+      imageUrls.image = files['sheet'][0].path;
+    }
+
+    if (Object.keys(imageUrls).length > 0) {
       req.imageUrls = imageUrls;
-    } 
-    
+    }
 
     next();
   });
 };
 
-export default uploadTeacher;
+export default uploadStudentresult;

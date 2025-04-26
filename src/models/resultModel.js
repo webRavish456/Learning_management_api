@@ -30,7 +30,7 @@ const resultSchema = new mongoose.Schema(
   
     status: { 
       type: String, 
-      default: "active",
+      default: "Active",
     },
   },
 

@@ -21,7 +21,7 @@ const allAssignmentSchema = new mongoose.Schema(
         },
 
         dueDate: { 
-            type:String, 
+            type:Date, 
             required: true, 
           
           },
@@ -32,9 +32,9 @@ const allAssignmentSchema = new mongoose.Schema(
           
           },
 
-        Status: { 
+        status: { 
             type: String, 
-            default:"active"
+            default:"Active"
           },
          
     },

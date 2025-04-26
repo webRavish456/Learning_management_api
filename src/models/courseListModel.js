@@ -7,6 +7,7 @@ const courseListSchema = new mongoose.Schema(
     courseName: { 
       type: String, 
       required: true,
+      unique:true
     },
   
     courseDescription: { 
@@ -30,7 +31,7 @@ const courseListSchema = new mongoose.Schema(
   
     status: { 
       type: String, 
-      default: "active",
+      default: "Active",
     },
   },
 

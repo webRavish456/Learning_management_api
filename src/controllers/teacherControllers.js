@@ -3,6 +3,7 @@ import TeacherModel from "../models/teacherModel.js";
 
 
 export const postTeacher = async (req, res) => {
+  
   const ContentType = req.headers["content-type"];
      
   if (ContentType && ContentType.includes("multipart/form-data"))  {
@@ -27,13 +28,7 @@ export const postTeacher = async (req, res) => {
 
    const parsecompanyDetails = JSON.parse(companyDetails)
 
-    const documents = {
-      resumeCertificate: req.imageUrls?.resumeCertificate || null,
-      highestQualificationCertificate: req.imageUrls?.highestQualificationCertificate || null,
-      panCard: req.imageUrls?.panCard || null,
-      aadharCard: req.imageUrls?.aadharCard || null,
-    };
-
+ 
         if (
           !teacherName ||
           !gender ||
@@ -52,7 +47,11 @@ export const postTeacher = async (req, res) => {
           !parsedBankDetails.bankName ||
           !parsedBankDetails.ifscCode ||
           !parsedBankDetails.branch ||
-          !parsedBankDetails.branchLocation
+          !parsedBankDetails.branchLocation ||
+          !req.imageUrls?.resumeCertificate ||
+          !req.imageUrls?.highestQualificationCertificate ||
+          !req.imageUrls?.panCard ||
+          !req.imageUrls?.aadharCard
         ) {
           return res.status(400).json({ status: "error", message: "All fields are required" });
         }
@@ -63,7 +62,6 @@ export const postTeacher = async (req, res) => {
       });
       
 
-      
       if (existingData) {
         if (existingData.emailId === emailId) {
           return res.status(400).json({ status: "error", message: " Email Id already exists" });
@@ -72,6 +70,13 @@ export const postTeacher = async (req, res) => {
           return res.status(400).json({ status: "error", message: "Mobile Number already exists" });
         }
       }
+
+      const documents = {
+        resumeCertificate: req.imageUrls?.resumeCertificate || null,
+        highestQualificationCertificate: req.imageUrls?.highestQualificationCertificate || null,
+        panCard: req.imageUrls?.panCard || null,
+        aadharCard: req.imageUrls?.aadharCard || null,
+      };
 
         const newTeacher = await TeacherModel.create({
           teacherName,
@@ -150,9 +155,6 @@ export const getTeacherById = async (req, res) => {
     if (ContentType && ContentType.includes("multipart/form-data")) {
 
    
-
-   
-
       try {
 
         const { id } = req.params;
@@ -168,7 +170,6 @@ export const getTeacherById = async (req, res) => {
           address,
           companyDetails,
           bankDetails, 
-          documents
         } = req.body;
       
    
@@ -176,13 +177,14 @@ export const getTeacherById = async (req, res) => {
 
    const parsecompanyDetails = JSON.parse(companyDetails)
 
+   const teacher = await TeacherModel.findById(id);
 
-    if (req.imageUrls?.resumeCertificate || req.imageUrls?.highestQualificationCertificate || req.imageUrls?.panCard ||req.imageUrls?.aadharCard) {
-      documents.resumeCertificate = req.imageUrls.resumeCertificate;
-      documents.highestQualificationCertificate = req.imageUrls.highestQualificationCertificate;
-      documents.panCard = req.imageUrls.panCard;
-      documents.aadharCard = req.imageUrls.aadharCard;
-    }  
+   const documents = {
+    resumeCertificate: req.imageUrls?.resumeCertificate || teacher.documents?.resumeCertificate || null,
+    highestQualificationCertificate: req.imageUrls?.highestQualificationCertificate || teacher.documents?.highestQualificationCertificate || null,
+    panCard: req.imageUrls?.panCard || teacher.documents?.panCard || null,
+    aadharCard: req.imageUrls?.aadharCard || teacher.documents?.aadharCard || null,
+  };
 
     
     const updateTeacher = await TeacherModel.updateOne(

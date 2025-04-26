@@ -101,7 +101,7 @@ const teacherSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "active",
+      default: "Active",
     },
   },
   { timestamps: true }
