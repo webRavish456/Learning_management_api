@@ -179,12 +179,14 @@ export const getTeacherById = async (req, res) => {
 
    const teacher = await TeacherModel.findById(id);
 
+   
    const documents = {
-    resumeCertificate: req.imageUrls?.resumeCertificate || teacher.documents?.resumeCertificate || null,
-    highestQualificationCertificate: req.imageUrls?.highestQualificationCertificate || teacher.documents?.highestQualificationCertificate || null,
-    panCard: req.imageUrls?.panCard || teacher.documents?.panCard || null,
-    aadharCard: req.imageUrls?.aadharCard || teacher.documents?.aadharCard || null,
+    resumeCertificate: req.imageUrls?.resumeCertificate ?? teacher.documents?.resumeCertificate ?? null,
+    highestQualificationCertificate: req.imageUrls?.highestQualificationCertificate ?? teacher.documents?.highestQualificationCertificate ?? null,
+    panCard: req.imageUrls?.panCard ?? teacher.documents?.panCard ?? null,
+    aadharCard: req.imageUrls?.aadharCard ?? teacher.documents?.aadharCard ?? null,
   };
+  
 
     
     const updateTeacher = await TeacherModel.updateOne(
