@@ -25,10 +25,15 @@ const studentsAssignmentSchema = new mongoose.Schema(
             required: true, 
           
           },
+          mobileNumber: { 
+            type:Number, 
+            required: true, 
+          
+          },
 
         status: { 
             type: String, 
-            required: true
+            default:"Active"
           },
          
     },
