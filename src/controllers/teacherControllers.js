@@ -179,7 +179,7 @@ export const getTeacherById = async (req, res) => {
 
    const teacher = await TeacherModel.findById(id);
 
-   
+
    const documents = {
     resumeCertificate: req.imageUrls?.resumeCertificate ?? teacher.documents?.resumeCertificate ?? null,
     highestQualificationCertificate: req.imageUrls?.highestQualificationCertificate ?? teacher.documents?.highestQualificationCertificate ?? null,
@@ -187,8 +187,19 @@ export const getTeacherById = async (req, res) => {
     aadharCard: req.imageUrls?.aadharCard ?? teacher.documents?.aadharCard ?? null,
   };
   
+  const existingData = await TeacherModel.find({ _id: { $ne: id } });
 
-    
+  const isMobileExists = existingData.some((doc) => doc.mobileNumber == mobileNumber);
+  if (isMobileExists) {
+    return res.status(400).json({ status: "error", message: "This mobile number is already registered." });
+  }
+  
+  const isEmailExists = existingData.some((doc) => doc.emailId === emailId);
+  if (isEmailExists) {
+    return res.status(400).json({ status: "error", message: "This email Id is already registered." });
+  }
+  
+
     const updateTeacher = await TeacherModel.updateOne(
       { _id: id },
       {

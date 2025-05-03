@@ -18,7 +18,12 @@ export const postCourselist = async (req, res) => {
 
       const syllabus =  req.imageUrls?.image || null
 
-     
+      const existingCourse = await CourseListModel.findOne({ courseName });
+
+      if (existingCourse) {
+        return res.status(400).json({ status: "error", message: "Course Name already exists" });
+      }
+      
       const newCourselist = await CourseListModel.create({ courseName, courseDescription, duration, pricing, syllabus });
 
       res.status(200).json({ status: "success", message: "Course Detail created successfully!" });
@@ -83,6 +88,13 @@ export const getCourselistById = async (req, res) => {
         updateData.syllabus=req.imageUrls?.image
       }
 
+      const existingData = await CourseListModel.find({ _id: { $ne: id } });
+
+      const isCourseExists = existingData.some((doc) => doc.courseName === updateData.courseName);
+      if (isCourseExists) {
+        return res.status(400).json({ status: "error", message: "This course name is already registered." });
+      }
+      
       const updatedCourselist =  await CourseListModel.updateOne({ _id: id }, { $set: updateData });
   
       if (!updatedCourselist) {

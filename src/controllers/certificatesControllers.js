@@ -87,8 +87,6 @@ export const getCertificatesById = async (req, res) => {
         updateData.certificates = req.imageUrls.image;
       }
 
-      console.log(id, updateData)
-
       const updatedCertificates =  await CertificatesModel.updateOne({ _id: id }, { $set: updateData });
   
       if (!updatedCertificates) {

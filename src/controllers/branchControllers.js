@@ -34,9 +34,6 @@ export const postBranch = async (req, res) => {
         if (existingBranch.branchName === branchName) {
           return res.status(400).json({ status: "error", message: "Branch Name already exists" });
         }
-        if (existingBranch.branchLocation === branchLocation) {
-          return res.status(400).json({ status: "error", message: "Branch Location already exists" });
-        }
       }
       
       const newBranch = await BranchModel.create({ branchName, branchLocation });
@@ -101,6 +98,15 @@ export const getBranchById = async (req, res) => {
     try {
       const { id } = req.params;
       const updateData = req.body; 
+
+      const existingData = await AllStudentsModel.find({ _id: { $ne: id } });
+
+      const isBranchExists = existingData.some((doc) => doc.branchName == updateData.branchName);
+    
+      if (isBranchExists) {
+        return res.status(400).json({ status: "error", message: "Branch Name already exists" });
+      }
+
       const updatedBranch =  await BranchModel.updateOne({ _id: id }, { $set: updateData });
   
       if (!updatedBranch) {

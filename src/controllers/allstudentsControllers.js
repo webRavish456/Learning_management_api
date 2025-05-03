@@ -83,9 +83,23 @@ export const getAllStudentsById = async (req, res) => {
         if (err) {
           return res.status(500).json({ status: "error", msg: "Error handling form data" });
         }
-    try {
+   
+        try {
       const { id } = req.params;
       const updateData = req.body; 
+
+      const existingData = await AllStudentsModel.find({ _id: { $ne: id } });
+
+      const isMobileExists = existingData.some((doc) => doc.mobileNumber == updateData.mobileNumber);
+      if (isMobileExists) {
+        return res.status(400).json({ status: "error", message: "This mobile number is already registered." });
+      }
+      
+      const isEmailExists = existingData.some((doc) => doc.emailId === updateData.emailId);
+      if (isEmailExists) {
+        return res.status(400).json({ status: "error", message: "This email Id is already registered." });
+      }
+
       const updatedAllStudents =  await AllStudentsModel.updateOne({ _id: id }, { $set: updateData });
   
       if (!updatedAllStudents) {
