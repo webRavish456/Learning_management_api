@@ -28,10 +28,6 @@ const resultSchema = new mongoose.Schema(
       required: true,
     },
   
-    status: { 
-      type: String, 
-      default: "Active",
-    },
   },
 
   { timestamps: true }
