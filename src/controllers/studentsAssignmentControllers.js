@@ -20,7 +20,7 @@ export const postStudentsAssignment = async (req, res) => {
   
       const {studentName, assignmentTitle, course, teacher, dueDate,mobileNumber, status} = req.body;
   
-      if (!assignmentTitle  || !studentName || !course || !teacher || !dueDate || !mobileNumber || status ) {
+      if (!assignmentTitle  || !studentName || !course || !teacher || !dueDate || !mobileNumber || !status ) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
