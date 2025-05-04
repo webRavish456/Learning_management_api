@@ -3,11 +3,16 @@ import mongoose from "mongoose";
 const studentsAssignmentSchema = new mongoose.Schema(
    
     {
+
+       studentName: { 
+        type: String, 
+        required: true, 
+        
+      },
         assignmentTitle: { 
           type: String, 
           required: true, 
-          
-        },
+          },
 
        course: { 
           type: String, 
@@ -33,7 +38,7 @@ const studentsAssignmentSchema = new mongoose.Schema(
 
         status: { 
             type: String, 
-            default:"Active"
+            required:true
           },
          
     },

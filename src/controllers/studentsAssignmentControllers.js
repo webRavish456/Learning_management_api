@@ -18,15 +18,15 @@ export const postStudentsAssignment = async (req, res) => {
   
     try {
   
-      const { assignmentTitle, course, teacher, dueDate,mobileNumber, status} = req.body;
+      const {studentName, assignmentTitle, course, teacher, dueDate,mobileNumber, status} = req.body;
   
-      if (!assignmentTitle  || !course || !teacher || !dueDate || !mobileNumber || status ) {
+      if (!assignmentTitle  || !studentName || !course || !teacher || !dueDate || !mobileNumber || status ) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
     
      
-      const newStudentsAssignment = await studentsAssignmentModel.create({ assignmentTitle, course, teacher, dueDate,mobileNumber, status });
+      const newStudentsAssignment = await studentsAssignmentModel.create({ assignmentTitle, course, teacher, dueDate,mobileNumber, studentName, status });
 
       res.status(200).json({ status: "success", message: "students Assignment Detail created successfully!" });
   
