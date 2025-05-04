@@ -26,12 +26,6 @@ const allAssignmentSchema = new mongoose.Schema(
           
           },
 
-      totalCompletion: { 
-            type: String, 
-            required: true, 
-          
-          },
-
         status: { 
             type: String, 
             default:"Active"

@@ -18,22 +18,14 @@ export const postAllAssignment = async (req, res) => {
   
     try {
   
-      const { assignmentTitle, course, teacher, dueDate, totalCompletion} = req.body;
+      const { assignmentTitle, course, teacher, dueDate} = req.body;
   
-      if (!assignmentTitle  || !course|| !teacher || !dueDate || !totalCompletion) {
+      if (!assignmentTitle  || !course|| !teacher || !dueDate ) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
-      // const [day, month, year] =dueDate.split("/");
-
-      // const now = new Date();
-      // const hours = now.getHours();
-      // const minutes = now.getMinutes();
-      // const seconds = now.getSeconds();
       
-      // const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-     
-      const newAllAssignment = await AllAssignmentModel.create({ assignmentTitle, course, teacher, dueDate, totalCompletion });
+      const newAllAssignment = await AllAssignmentModel.create({ assignmentTitle, course, teacher, dueDate });
 
       res.status(200).json({ status: "success", message: "allAssignment Detail created successfully!" });
   
@@ -99,18 +91,7 @@ export const getAllAssignmentById = async (req, res) => {
       const { id } = req.params;
       const updateData = req.body; 
 
-      // if(updateData.dueDate)
-      // {
-      //   const [day, month, year] = updateData.dueDate.split("/");
-
-      //   const now = new Date();
-      //   const hours = now.getHours();
-      //   const minutes = now.getMinutes();
-      //   const seconds = now.getSeconds();
-        
-      //   const formattedDate = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      //   updateData.dueDate=new Date(formattedDate)
-      // }
+ 
 
       const updatedAllAssignment =  await AllAssignmentModel.updateOne({ _id: id }, { $set: updateData });
   
