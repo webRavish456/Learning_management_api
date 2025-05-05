@@ -24,32 +24,7 @@ export const postTimetable = async (req, res) => {
       if (! courseName|| !teacherName|| !startTiming|| !lastTiming|| !workDays) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
-  
-   
-      // const existingTimetable = await TimetableModel.findOne({
-      //   $or: [{ courseName }, { teacherName } , {startTiming}, {lastTiming},{workDays}]
-      // });
-      
-      // console.log(existingTimetable)  //check
-
-      // if (existingTimetable) {
-      //   if (existingTimetable.courseName === courseName) {
-      //     return res.status(400).json({ status: "error", message: "Course Name already exists" });
-      //   }
-      //   if (existingTimetable.teacherName === teacherName) {
-      //     return res.status(400).json({ status: "error", message: "Teacher Name already exists" });
-      //   }
-      //   if (existingTimetable.startTiming === startTiming) {
-      //       return res.status(400).json({ status: "error", message: "StartTime already exists" });
-      //     }
-      //     if (existingTimetable.lastTiming === lastTiming) {
-      //       return res.status(400).json({ status: "error", message: "LastTiming already exists" });
-      //     }
-      //     if (existingTimetable.workDays === workDays) {
-      //       return res.status(400).json({ status: "error", message: "Work Days already exists" });
-      //     }
-      // }
-      
+     
       const newTimetable = await TimetableModel.create({ courseName, teacherName,startTiming,lastTiming,workDays });
 
       res.status(200).json({ status: "success", message: "TimeTable created successfully!" });

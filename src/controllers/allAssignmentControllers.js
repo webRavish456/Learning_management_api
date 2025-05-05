@@ -44,10 +44,6 @@ export const postAllAssignment = async (req, res) => {
     try {
       const allAssignments = await AllAssignmentModel.find();
   
-      if (allAssignments.length === 0) {
-        return res.status(404).json({ status: "error", message: "AllAssignment Details not found" });
-      }
-  
       res.status(200).json({ status: "success", data: allAssignments });
     } catch (error) {
       console.error("Error fetching allAssignment:", error);

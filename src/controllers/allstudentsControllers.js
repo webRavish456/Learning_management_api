@@ -43,10 +43,6 @@ export const postAllStudents = async (req, res) => {
     try {
       const allstudents = await AllStudentsModel.find();
   
-      if (allstudents.length === 0) {
-        return res.status(404).json({ status: "error", message: "Allstudents List not found" });
-      }
-  
       res.status(200).json({ status: "success", data: allstudents });
     } catch (error) {
       console.error("Error fetching allstudents:", error);
