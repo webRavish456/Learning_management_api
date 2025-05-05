@@ -10,15 +10,15 @@ export const postDocumentsharing = async (req, res) => {
 
     try {
   
-      const {courseTitle, courseDescription, teacher} = req.body;
+      const {topic, topicDescription, teacher, course} = req.body;
   
-      if (!courseTitle || !courseDescription ||  !teacher || !req.imageUrls?.image) {
+      if (!topic || !topicDescription ||  !teacher || !course || !req.imageUrls?.image) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
      const document =  req.imageUrls?.image || null
   
-      const newDocumentsharing = await DocumentSharingModel.create({ courseTitle, courseDescription, teacher, document });
+      const newDocumentsharing = await DocumentSharingModel.create({ topic, topicDescription, teacher, course, document });
 
       res.status(200).json({ status: "success", message: "Document sharing Detail created successfully!" });
   

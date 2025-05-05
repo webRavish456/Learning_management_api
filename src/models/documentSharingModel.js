@@ -4,12 +4,17 @@ const documentSharingSchema = new mongoose.Schema(
    
   {
   
-    courseTitle: { 
+    topic: { 
       type: String, 
       required: true,
     },
   
-    courseDescription: { 
+    topicDescription: { 
+      type: String, 
+      required: true,
+    },
+
+    course: {
       type: String, 
       required: true,
     },
@@ -21,11 +26,6 @@ const documentSharingSchema = new mongoose.Schema(
 
     document: {
         type: String, 
-    },
-
-    status: { 
-      type: String, 
-      default: "Active",
     },
   },
 
