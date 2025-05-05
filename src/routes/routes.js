@@ -45,7 +45,7 @@ router.route('/forgot').post(postForgot);
 router.route('/branch').post(verifyToken, postBranch);
 router.route('/branch').get(verifyToken, getBranch);
 router.route('/branch/:id').get(verifyToken, getBranchById);
-router.route('/branch/:id').put(verifyToken, updateBranch);
+router.route('/branch/:id').patch(verifyToken, updateBranch);
 router.route('/branch/:id').delete(verifyToken, deleteBranch);
 
 /* exam */
