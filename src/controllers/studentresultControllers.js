@@ -11,11 +11,11 @@ export const postStudentresult= async (req, res) => {
   
     try {
   
-     const { studentName, studentId, resultId, courseName, marksObtained, totalMarks, passingMarks, status} = req.body;
+     const { studentName, mobileNumber, resultId, courseName, marksObtained, totalMarks, passingMarks, status} = req.body;
   
-     const existingStudent= await AllStudentsModel.findOne({_id:studentId})
+     const existingStudent= await AllStudentsModel.findOne({mobileNumber:mobileNumber})
 
-     const existingResult = await StudentresultModel.findOne({studentId})
+     const existingResult = await StudentresultModel.findOne({mobileNumber})
 
      if(!existingStudent)
      {
@@ -29,13 +29,13 @@ export const postStudentresult= async (req, res) => {
       });
     }
 
-      if (!studentName  || !resultId || !courseName || !marksObtained || !totalMarks || !passingMarks || !status || !studentId || !req.imageUrls?.image) {
+      if (!studentName  || !resultId || !courseName || !marksObtained || !totalMarks || !passingMarks || !status || !mobileNumber || !req.imageUrls?.image) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
      const sheet = req.imageUrls?.image || null;
 
-      const newStudentresult = await StudentresultModel.create({ studentName, courseName,marksObtained, totalMarks, passingMarks, sheet, status, resultId, studentId });
+      const newStudentresult = await StudentresultModel.create({ studentName, courseName,marksObtained, totalMarks, passingMarks, sheet, status, resultId, mobileNumber });
 
       res.status(200).json({ status: "success", message: "Studentresult created successfully!" });
   

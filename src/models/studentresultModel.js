@@ -8,8 +8,8 @@ const studentresultSchema = new mongoose.Schema(
       required: true,
     },
 
-    studentId: {
-      type: String,
+    mobileNumber: {
+      type: Number,
       required:true
     },
 
