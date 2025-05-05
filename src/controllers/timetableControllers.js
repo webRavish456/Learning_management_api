@@ -44,10 +44,6 @@ export const postTimetable = async (req, res) => {
     try {
       const timetables = await TimetableModel.find();
   
-      if (timetables.length === 0) {
-        return res.status(404).json({ status: "error", message: "Timetable not found" });
-      }
-  
       res.status(200).json({ status: "success", data: timetables });
     } catch (error) {
       console.error("Error fetching timetable:", error);

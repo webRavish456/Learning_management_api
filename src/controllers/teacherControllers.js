@@ -118,10 +118,6 @@ export const postTeacher = async (req, res) => {
     try {
       const teachers= await TeacherModel.find();
 
-      if (teachers.length === 0) {
-        return res.status(404).json({ status: "error", message: "Teacher Details not found" });
-      }
-
       res.status(200).json({ status: "success", data: teachers });
     } catch (error) {
       console.error("Error fetching teacher data:", error);

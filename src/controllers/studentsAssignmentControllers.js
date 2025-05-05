@@ -44,11 +44,7 @@ export const postStudentsAssignment = async (req, res) => {
   export const getStudentsAssignment = async (req, res) => {
     try {
       const studentsAssignments = await studentsAssignmentModel.find();
-  
-      if (studentsAssignments.length === 0) {
-        return res.status(404).json({ status: "error", message: "Students Assignment Details not found" });
-      }
-  
+
       res.status(200).json({ status: "success", data: studentsAssignments });
     } catch (error) {
       console.error("Error fetching students Assignment:", error);

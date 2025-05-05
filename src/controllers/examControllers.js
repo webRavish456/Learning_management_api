@@ -44,11 +44,7 @@ export const postExam = async (req, res) => {
   export const getExam = async (req, res) => {
     try {
       const exams = await ExamModel.find();
-  
-      if (exams.length === 0) {
-        return res.status(404).json({ status: "error", message: "Exams Details not found" });
-      }
-  
+    
       res.status(200).json({ status: "success", data: exams });
     } catch (error) {
       console.error("Error fetching exam:", error);
@@ -91,7 +87,7 @@ export const getExamById = async (req, res) => {
 
       const { id } = req.params;
       const updateData = req.body; 
-      
+
       const updatedExam =  await ExamModel.updateOne({ _id: id }, { $set: updateData });
   
       if (!updatedExam) {

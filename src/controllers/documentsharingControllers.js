@@ -34,11 +34,7 @@ export const postDocumentsharing = async (req, res) => {
   export const getDocumentsharing = async (req, res) => {
     try {
       const Documentsharing = await DocumentSharingModel.find();
-  
-      if (Documentsharing.length === 0) {
-        return res.status(404).json({ status: "error", message: "Dooument  Details not found" });
-      }
-  
+ 
       res.status(200).json({ status: "success", data: Documentsharing });
     } catch (error) {
       console.error("Error fetching Document sharing:", error);

@@ -41,13 +41,10 @@ export const postResult = async (req, res) => {
 
   export const getResult = async (req, res) => {
     try {
-      const result = await ResultModel.find();
-  
-      if (result.length === 0) {
-        return res.status(404).json({ status: "error", message: "Result Details not found" });
-      }
-  
+
+      const result = await ResultModel.find(); 
       res.status(200).json({ status: "success", data: result });
+      
     } catch (error) {
       console.error("Error fetching result:", error);
       res.status(500).json({ status: "error", message: "Internal server error" });

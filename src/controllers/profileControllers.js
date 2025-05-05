@@ -65,11 +65,7 @@ export const postProfile = async (req, res) => {
       const profile = id 
         ? await profileModel.findById(id) 
         : await profileModel.findOne({ email: jwt.verify(token, process.env.JWT_SECRET).email });
-      
-      if (!profile) {
-        return res.status(404).json({ status: "error", message: "Profile not found" });
-      }
-      
+         
       res.status(200).json({ status: "success", data: profile });
       
     } 

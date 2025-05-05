@@ -55,11 +55,7 @@ export const postStudentresult= async (req, res) => {
        const { resultId } = req.params; 
 
       const studentresult = await StudentresultModel.find({resultId});
-  
-      if (studentresult.length === 0) {
-        return res.status(404).json({ status: "error", message: "Student Result not found" });
-      }
-  
+   
       res.status(200).json({ status: "success", data: studentresult });
     } catch (error) {
       console.error("Error fetching studentresult:", error);

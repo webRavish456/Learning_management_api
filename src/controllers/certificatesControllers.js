@@ -42,10 +42,6 @@ export const postCertificates = async (req, res) => {
     try {
       const certificates = await CertificatesModel.find();
   
-      if (certificates.length === 0) {
-        return res.status(404).json({ status: "error", message: "Certificates not found" });
-      }
-  
       res.status(200).json({ status: "success", data: certificates });
     } catch (error) {
       console.error("Error fetching certificates:", error);

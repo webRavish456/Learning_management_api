@@ -42,10 +42,6 @@ export const postCourselist = async (req, res) => {
     try {
       const courselist = await CourseListModel.find();
   
-      if (courselist.length === 0) {
-        return res.status(404).json({ status: "error", message: "Course Details not found" });
-      }
-  
       res.status(200).json({ status: "success", data: courselist });
     } catch (error) {
       console.error("Error fetching courselist:", error);
