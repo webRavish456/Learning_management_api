@@ -99,7 +99,7 @@ export const getBranchById = async (req, res) => {
       const { id } = req.params;
       const updateData = req.body; 
 
-      const existingData = await AllStudentsModel.find({ _id: { $ne: id } });
+      const existingData = await BranchModel.find({ _id: { $ne: id } });
 
       const isBranchExists = existingData.some((doc) => doc.branchName == updateData.branchName);
     
