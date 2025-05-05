@@ -28,6 +28,8 @@ import verifyToken from '../middleware/auth.js';
 import { postAdmin, postForgot } from '../controllers/authControllers.js';
 import { deleteStudentresult, getStudentresult, getStudentresultById, postStudentresult, updateStudentresult } from '../controllers/studentresultControllers.js';
 import uploadStudentresult from '../upload/studentresult.js';
+import uploadProfile from '../upload/profile.js';
+import { getProfile, postProfile, updateProfile } from '../controllers/profileControllers.js';
 
 
 
@@ -133,3 +135,9 @@ router.route('/timetable').get(verifyToken, getTimetable)
 router.route('/timetable/:id').get(verifyToken, getTimetableById)
 router.route('/timetable/:id').patch(verifyToken, updateTimetable)
 router.route('/timetable/:id').delete(verifyToken, deleteTimetable)
+
+/* profile */
+
+router.route('/profile').post(verifyToken, uploadProfile, postProfile);
+router.route('/profile/:id').get(verifyToken, getProfile);
+router.route('/profile/:id').patch(verifyToken, uploadProfile, updateProfile );
