@@ -14,8 +14,7 @@ export const connectDB = async () => {
   try {
   
     await mongoose.connect(connection_string, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+
       family: 4,
     }).then(async ()=>{  
       await createAdmin();

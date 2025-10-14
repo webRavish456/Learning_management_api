@@ -19,7 +19,7 @@ const storage = new CloudinaryStorage({
       resource_type: 'auto',
       allowedFormats: [
         'jpeg', 'jpg', 'png', 'gif', 'svg', 'webp', 'bmp', 'tiff', 'jfif',
-        'pdf', 'docx', 'doc', 'xlsx', 'ppt', 'pptx'
+        'pdf', 'docx', 'doc', 'xlsx', 'ppt', 'pptx',
       ],
       public_id: `${Date.now()}-${file.originalname}`,
     };
