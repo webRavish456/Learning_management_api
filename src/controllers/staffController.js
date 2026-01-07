@@ -1,29 +1,17 @@
 import mongoose from "mongoose";
 import StaffModel from "../models/staffmodel.js";
 
-// Utility function to validate MongoDB ObjectId
+/* ============================
+   🔧 Utility
+============================ */
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 /* ============================
-   ✅ Create new Staff
+   ✅ CREATE STAFF
 ============================ */
-export const createStaff = async (req, res) => {
+const createStaff = async (req, res) => {
   try {
-    const { staffName, email, mobileNO, designation, address, salary, joiningDate } = req.body;
-
-    // 1️⃣ Validation - check all required fields
-    if (!staffName || !email || !mobileNO || !designation || !address || !salary || !joiningDate) {
-      return res.status(400).json({ status: "error", message: "All fields are required" });
-    }
-
-    // 2️⃣ Check if email already exists
-    const existingStaff = await StaffModel.findOne({ email });
-    if (existingStaff) {
-      return res.status(409).json({ status: "error", message: "Email already registered" });
-    }
-
-    // 3️⃣ Create new staff entry
-    const newStaff = await StaffModel.create({
+    const {
       staffName,
       email,
       mobileNO,
@@ -31,6 +19,36 @@ export const createStaff = async (req, res) => {
       address,
       salary,
       joiningDate,
+      status,
+    } = req.body;
+
+    // ✅ Required fields
+    if (!staffName || !email || !mobileNO || !designation || !status) {
+      return res.status(400).json({
+        status: "error",
+        message: "All required fields must be filled",
+      });
+    }
+
+    // ✅ Email uniqueness
+    const existingStaff = await StaffModel.findOne({ email });
+    if (existingStaff) {
+      return res.status(409).json({
+        status: "error",
+        message: "Email already registered",
+      });
+    }
+
+    // ✅ Create staff
+    const newStaff = await StaffModel.create({
+      staffName,
+      email,
+      mobileNO,
+      designation,
+      address: address || "",
+      salary: salary || null,
+      joiningDate: joiningDate || null,
+      status,
     });
 
     return res.status(201).json({
@@ -39,15 +57,18 @@ export const createStaff = async (req, res) => {
       data: newStaff,
     });
   } catch (error) {
-    console.error("Error creating staff:", error);
-    return res.status(500).json({ status: "error", message: "Internal Server Error" });
+    console.error("Create Staff Error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
 };
 
 /* ============================
-   ✅ Get all Staff Members
+   ✅ GET ALL STAFF
 ============================ */
-export const getAllStaff = async (req, res) => {
+const getAllStaff = async (req, res) => {
   try {
     const staffList = await StaffModel.find().sort({ createdAt: -1 });
 
@@ -56,25 +77,34 @@ export const getAllStaff = async (req, res) => {
       data: staffList,
     });
   } catch (error) {
-    console.error("Error fetching staff list:", error);
-    return res.status(500).json({ status: "error", message: "Internal Server Error" });
+    console.error("Get All Staff Error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
 };
 
 /* ============================
-   ✅ Get Single Staff by ID
+   ✅ GET STAFF BY ID
 ============================ */
-export const getStaffById = async (req, res) => {
+const getStaffById = async (req, res) => {
   try {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-      return res.status(400).json({ status: "error", message: "Invalid Staff ID" });
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid Staff ID",
+      });
     }
 
     const staff = await StaffModel.findById(id);
     if (!staff) {
-      return res.status(404).json({ status: "error", message: "Staff member not found" });
+      return res.status(404).json({
+        status: "error",
+        message: "Staff member not found",
+      });
     }
 
     return res.status(200).json({
@@ -82,21 +112,27 @@ export const getStaffById = async (req, res) => {
       data: staff,
     });
   } catch (error) {
-    console.error("Error fetching staff by ID:", error);
-    return res.status(500).json({ status: "error", message: "Internal Server Error" });
+    console.error("Get Staff By ID Error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
 };
 
 /* ============================
-   ✅ Update Staff Details
+   ✅ UPDATE STAFF
 ============================ */
-export const updateStaff = async (req, res) => {
+const updateStaff = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
 
     if (!isValidObjectId(id)) {
-      return res.status(400).json({ status: "error", message: "Invalid Staff ID" });
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid Staff ID",
+      });
     }
 
     // Email conflict check
@@ -106,14 +142,24 @@ export const updateStaff = async (req, res) => {
         _id: { $ne: id },
       });
       if (existing) {
-        return res.status(409).json({ status: "error", message: "Email already in use by another staff" });
+        return res.status(409).json({
+          status: "error",
+          message: "Email already in use by another staff",
+        });
       }
     }
 
-    const updatedStaff = await StaffModel.findByIdAndUpdate(id, { $set: updateData }, { new: true });
+    const updatedStaff = await StaffModel.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    );
 
     if (!updatedStaff) {
-      return res.status(404).json({ status: "error", message: "Staff member not found" });
+      return res.status(404).json({
+        status: "error",
+        message: "Staff member not found",
+      });
     }
 
     return res.status(200).json({
@@ -122,26 +168,35 @@ export const updateStaff = async (req, res) => {
       data: updatedStaff,
     });
   } catch (error) {
-    console.error("Error updating staff:", error);
-    return res.status(500).json({ status: "error", message: "Internal Server Error" });
+    console.error("Update Staff Error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
 };
 
 /* ============================
-   ✅ Delete Staff Member
+   ✅ DELETE STAFF
 ============================ */
-export const deleteStaff = async (req, res) => {
+const deleteStaff = async (req, res) => {
   try {
     const { id } = req.params;
 
     if (!isValidObjectId(id)) {
-      return res.status(400).json({ status: "error", message: "Invalid Staff ID" });
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid Staff ID",
+      });
     }
 
     const deletedStaff = await StaffModel.findByIdAndDelete(id);
 
     if (!deletedStaff) {
-      return res.status(404).json({ status: "error", message: "Staff member not found" });
+      return res.status(404).json({
+        status: "error",
+        message: "Staff member not found",
+      });
     }
 
     return res.status(200).json({
@@ -149,7 +204,21 @@ export const deleteStaff = async (req, res) => {
       message: "Staff member deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting staff:", error);
-    return res.status(500).json({ status: "error", message: "Internal Server Error" });
+    console.error("Delete Staff Error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
+};
+
+/* ============================
+   🚀 FINAL EXPORTS
+============================ */
+export {
+  createStaff,
+  getAllStaff,
+  getStaffById,
+  updateStaff,
+  deleteStaff,
 };

@@ -1,138 +1,113 @@
-import multer from "multer";
+
+  import multer from "multer";
 import BranchModel from "../models/branchModel.js";
 
 const storage = multer.memoryStorage();
-
 const upload = multer({ storage: storage });
 
 
-export const postBranch = async (req, res) => {
+const saveBranchData = async (req, res, data) => {
+  try {
+    const { branchName, branchLocation, Contact, status } = data;
 
-    const ContentType = req.headers["content-type"];
-  
-    if (ContentType && ContentType.includes("multipart/form-data")) {
-  
-      upload.none()(req, res, async (err) => {
-        if (err) {
-          return res.status(500).json({ status: "error", msg: "Error handling form data" });
-        }
-  
-    try {
-  
-      const { branchName, branchLocation} = req.body;
-  
-      if (! branchName || !branchLocation) {
-        return res.status(400).json({ status: "error", message: "All fields are required" });
-      }
-  
+ 
+    console.log("Saving Data:", data);
+
    
-      const existingBranch = await BranchModel.findOne({
-        $or: [{ branchName }, { branchLocation }]
+    if (!branchName || !branchLocation || !Contact||!status) {
+      return res.status(400).json({ 
+        status: "error", 
+        message: "All fields (branchName, branchLocation, Contact, status) are required" 
       });
-      
-      if (existingBranch) {
-        if (existingBranch.branchName === branchName) {
-          return res.status(400).json({ status: "error", message: "Branch Name already exists" });
-        }
-      }
-      
-      const newBranch = await BranchModel.create({ branchName, branchLocation });
+    }
 
-      res.status(200).json({ status: "success", message: "Branch created successfully!" });
+    const existingBranch = await BranchModel.findOne({ branchName });
+    if (existingBranch) {
+      return res.status(400).json({ status: "error", message: "Branch Name already exists" });
+    }
+
+    await BranchModel.create({ branchName, branchLocation, Contact, status });
+    return res.status(200).json({ status: "success", message: "Branch created successfully!" });
+  } catch (error) {
+    console.error("Post Branch Error:", error);
+    return res.status(500).json({ status: "error", message: error.message }); 
+  }
+};
+
+
+export const postBranch = async (req, res) => {
+  const contentType = req.headers["content-type"] || "";
+
   
-    } catch (error) {
-      console.error("Error creating branch:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-    }
-    
-  )}
-  
-  };
+  if (contentType.includes("multipart/form-data")) {
+    upload.none()(req, res, (err) => {
+      if (err) return res.status(500).json({ status: "error", message: "Form parsing error" });
+      saveBranchData(req, res, req.body);
+    });
+  } else {
+   
+    saveBranchData(req, res, req.body);
+  }
+};
 
 
-  export const getBranch = async (req, res) => {
-    try {
-      const branches = await BranchModel.find();  
-      res.status(200).json({ status: "success", data: branches });
-    } catch (error) {
-      console.error("Error fetching branch:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-  };
+export const getBranch = async (req, res) => {
+  try {
+    const branches = await BranchModel.find().sort({ createdAt: -1 });
+    res.status(200).json({ status: "success", data: branches });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: "Internal server error" });
+  }
+};
 
-
+// --- 3. GET BRANCH BY ID ---
 export const getBranchById = async (req, res) => {
-    try {
-      const { id } = req.params; 
+  try {
+    const { id } = req.params;
+    const branch = await BranchModel.findById(id);
+    if (!branch) return res.status(404).json({ status: "error", message: "Branch not found" });
+    res.status(200).json({ status: "success", data: branch });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: "Internal server error" });
+  }
+};
 
-      const branch = await BranchModel.findById(id); 
-  
-      if (!branch) {
-        return res.status(404).json({ status: "error", message: "Branch not found" });
-      }
-  
-      res.status(200).json({ status: "success", data: branch });
-    } catch (error) {
-      console.error("Error fetching branch:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-  };
+// --- 4. UPDATE BRANCH ---
+export const updateBranch = async (req, res) => {
+  const contentType = req.headers["content-type"] || "";
 
-
-  export const updateBranch = async (req, res) => {
-
-    const ContentType = req.headers["content-type"];
-  
-    if (ContentType && ContentType.includes("multipart/form-data")) {
-  
-      upload.none()(req, res, async (err) => {
-        if (err) {
-          return res.status(500).json({ status: "error", msg: "Error handling form data" });
-        }
+  const performUpdate = async (data) => {
     try {
       const { id } = req.params;
-      const updateData = req.body; 
-
-      const existingData = await BranchModel.find({ _id: { $ne: id } });
-
-      const isBranchExists = existingData.some((doc) => doc.branchName == updateData.branchName);
-    
-      if (isBranchExists) {
-        return res.status(400).json({ status: "error", message: "Branch Name already exists" });
+      if (data.branchName) {
+        const isExists = await BranchModel.findOne({ branchName: data.branchName, _id: { $ne: id } });
+        if (isExists) return res.status(400).json({ status: "error", message: "Branch Name already exists" });
       }
-
-      const updatedBranch =  await BranchModel.updateOne({ _id: id }, { $set: updateData });
-  
-      if (!updatedBranch) {
-        return res.status(404).json({ status: "error", message: "Branch not found" });
-      }
-  
-      res.status(200).json({ status: "success", message: "Branch updated successfully"});
-
+      const updated = await BranchModel.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true });
+      if (!updated) return res.status(404).json({ status: "error", message: "Branch not found" });
+      res.status(200).json({ status: "success", message: "Branch updated successfully", data: updated });
     } catch (error) {
-      console.error("Error updating branch:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-})
+      res.status(500).json({ status: "error", message: error.message });
     }
   };
 
-  
-  export const deleteBranch = async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      const deletedBranch = await BranchModel.deleteOne({ _id: id });
-       
-      if (deletedBranch.deletedCount === 0) {
-        return res.status(404).json({ status: "error", message: "Branch not found" });
-      }
-  
-      res.status(200).json({ status: "success", message: "Branch deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting branch:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-    
-  };
+  if (contentType.includes("form-data")) {
+    upload.none()(req, res, (err) => {
+      if (err) return res.status(500).json({ status: "error", message: "Error parsing data" });
+      performUpdate(req.body);
+    });
+  } else {
+    performUpdate(req.body);   
+  }
+};
+
+export const deleteBranch = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedBranch = await BranchModel.findByIdAndDelete(id);
+    if (!deletedBranch) return res.status(404).json({ status: "error", message: "Branch not found" });
+    res.status(200).json({ status: "success", message: "Branch deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: "Internal server error" });
+  }
+ };  

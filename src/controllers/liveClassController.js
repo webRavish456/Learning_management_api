@@ -5,7 +5,7 @@ export const createLiveClass = async (req, res) => {
   try {
     const { title, description, courseName, teacherName, date, timing, duration, meetingLink } = req.body;
 
-    if (!title || !description || !date || !timing || !duration || !meetingLink) {
+    if (!title || !description ||!courseName||!teacherName || !date || !timing || !duration || !meetingLink) {
       return res.status(400).json({ success: false, message: "All required fields must be filled" });
     }
 
@@ -23,7 +23,7 @@ export const createLiveClass = async (req, res) => {
     const savedClass = await newClass.save();
     res.status(201).json({ success: true, data: savedClass });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    req.status(500).json({ success: false, message: error.message });
   }
 };
 

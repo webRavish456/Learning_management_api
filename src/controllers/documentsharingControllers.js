@@ -10,9 +10,9 @@ export const postDocumentsharing = async (req, res) => {
 
     try {
   
-      const {topic, topicDescription, teacher, course} = req.body;
+      const {topic, topicDescription, teacher, course } = req.body;
   
-      if (!topic || !topicDescription ||  !teacher || !course || !req.imageUrls?.image) {
+      if (!topic || !topicDescription ||  !teacher || !course ||!document || !req.imageUrls?.image) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 

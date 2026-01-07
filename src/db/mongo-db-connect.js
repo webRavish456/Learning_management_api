@@ -1,27 +1,16 @@
 import mongoose from "mongoose";
-import dotenv from 'dotenv';
-import { createAdmin } from "../seedData/createAdmin.js";
-
+import dotenv from "dotenv";
 dotenv.config();
-
-const username = process.env.MONGO_USER;
-const password = process.env.MONGO_PASSWORD;
-const clusterName = process.env.MONGO_CLUSTER_NAME;
-
-const connection_string = `mongodb+srv://${username}:${password}@${clusterName}.tr56kro.mongodb.net/learning?retryWrites=true&w=majority&appName=Learning`;
 
 export const connectDB = async () => {
   try {
-  
-    await mongoose.connect(connection_string, {
+    const MONGO_URI = process.env.MONGO_URI;
+    if (!MONGO_URI) throw new Error("MONGO_URI not found in .env");
 
-      family: 4,
-    }).then(async ()=>{  
-      await createAdmin();
-      console.log('Connection successfull')}
-    );
+    await mongoose.connect(MONGO_URI);
+    console.log("✅ Database connected successfully");
   } catch (error) {
-    console.error("Error connecting to MongoDB Atlas:", error.message);
+    console.error("❌ Error connecting to MongoDB Atlas:", error.message);
     throw error;
   }
 };

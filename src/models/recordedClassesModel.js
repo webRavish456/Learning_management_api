@@ -25,7 +25,7 @@ const recordedClassesSchema = new mongoose.Schema(
       required: true,
     },
     UploadDate: {
-      type: Number,
+      type: String,
       required: true,
     },
     duration: {

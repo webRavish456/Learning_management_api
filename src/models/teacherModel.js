@@ -20,7 +20,7 @@ const teacherSchema = new mongoose.Schema(
       required: true,
       unique:true
     },
-    emailId: {
+    emailid: {
       type: String,
       required: true,
       unique:true

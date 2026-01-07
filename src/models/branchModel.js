@@ -1,29 +1,27 @@
 import mongoose from "mongoose";
 
 const branchSchema = new mongoose.Schema(
-   
     {
         branchName: { 
-          type: String, 
-          required: true, 
-         
+            type: String, 
+            required: true, 
         },
-
         branchLocation: { 
-          type: String, 
-          required: true ,
-         
+            type: String, 
+            required: true,
+        },
+        Contact: { 
+            type: String, 
+            required: true,
         },
         status: { 
-          type: String, 
-          default:"Active"
+            type: String, 
+            default: "Active"
         },
     },
-
-    { timestamps: true }, 
-
+    { timestamps: true }
 );
 
 const BranchModel = mongoose.model('Branch', branchSchema);
 
-export default BranchModel 
+export default BranchModel;

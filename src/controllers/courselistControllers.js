@@ -1,4 +1,5 @@
 import CourseListModel from "../models/courseListModel.js"
+import uploadCourse from "../upload/courseList.js";
 
 
 export const postCourselist = async (req, res) => {
@@ -10,9 +11,9 @@ export const postCourselist = async (req, res) => {
   
     try {
   
-      const { courseName, courseDescription, duration, pricing} = req.body;
+      const { courseId,courseName,status, courseDescription,assignedTeachers,video, duration, pricing} = req.body;
   
-      if (!courseName || !courseDescription ||  !duration || !pricing || !req.imageUrls?.image) {
+      if (!courseName || !courseDescription  ||!courseId||!assignedTeachers ||  !duration || !pricing||!video ||!status  ||!req.imageUrls?.image) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
       }
 
