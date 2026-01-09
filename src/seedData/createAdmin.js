@@ -20,7 +20,7 @@ const connectDB = async () => {
   }
 };
 
-// ✅ Create admin function
+
 const createAdmin = async () => {
   try {
     const adminExist = await AdminModel.findOne({ email: "superadmin@gmail.com" });
@@ -41,7 +41,7 @@ const createAdmin = async () => {
   }
 };
 
-// ✅ Run seeding
+
 const startSeeding = async () => {
   await connectDB();
   await createAdmin();
