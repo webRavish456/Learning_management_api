@@ -1,128 +1,129 @@
-import CourseListModel from "../models/courseListModel.js"
-import uploadCourse from "../upload/courseList.js";
+import CourseListModel from "../models/courseListModel.js";
 
 
 export const postCourselist = async (req, res) => {
+    console.log("Incoming Body:", req.body);
+    console.log("Incoming Files (Cloudinary URLs):", req.imageUrls);
 
-    const ContentType = req.headers["content-type"];
-  
-    if (ContentType && ContentType.includes("multipart/form-data")) {
-  
-  
     try {
-  
-      const { courseId,courseName,status, courseDescription,assignedTeachers,video, duration, pricing} = req.body;
-  
-      if (!courseName || !courseDescription  ||!courseId||!assignedTeachers ||  !duration || !pricing||!video ||!status  ||!req.imageUrls?.image) {
-        return res.status(400).json({ status: "error", message: "All fields are required" });
-      }
+        const { 
+            courseId, courseName, courseDescription, 
+            duration, pricing, assignedTeachers, status 
+        } = req.body;
 
-      const syllabus =  req.imageUrls?.image || null
+       
+        if (!courseId || !courseName || !courseDescription || !duration || !pricing) {
+            return res.status(400).json({ 
+                status: "error", 
+                message: "Essential fields (courseId, courseName, courseDescription, duration, pricing) are missing",
+                receivedData: req.body 
+            });
+        }
 
-      const existingCourse = await CourseListModel.findOne({ courseName });
+       
+        const existingCourse = await CourseListModel.findOne({ $or: [{ courseId }, { courseName }] });
+        if (existingCourse) {
+            return res.status(400).json({ status: "error", message: "Course ID or Name already exists" });
+        }
 
-      if (existingCourse) {
-        return res.status(400).json({ status: "error", message: "Course Name already exists" });
-      }
-      
-      const newCourselist = await CourseListModel.create({ courseName, courseDescription, duration, pricing, syllabus });
+       
+        const syllabus = req.imageUrls?.image || null;
+        const videoFile = req.imageUrls?.video || req.body.video || null;
 
-      res.status(200).json({ status: "success", message: "Course Detail created successfully!" });
-  
+        const newCourse = await CourseListModel.create({
+            courseId,
+            courseName,
+            courseDescription,
+            duration,
+            pricing: Number(pricing),
+            assignedTeachers,
+            syllabus,
+            video: videoFile,
+            status: status || "Active"
+        });
+
+        res.status(200).json({ 
+            status: "success", 
+            message: "Course created successfully!", 
+            data: newCourse 
+        });
+
     } catch (error) {
-      console.error("Error creating courselist:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+        console.error("Create Controller Error:", error);
+        res.status(500).json({ status: "error", message: error.message });
     }
-    
-  }
-  
-  };
+};
 
 
-  export const getCourselist = async (req, res) => {
+export const getCourselist = async (req, res) => {
     try {
-      const courselist = await CourseListModel.find();
-  
-      res.status(200).json({ status: "success", data: courselist });
+        const data = await CourseListModel.find().sort({ createdAt: -1 });
+        res.status(200).json({ status: "success", data });
     } catch (error) {
-      console.error("Error fetching courselist:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+        res.status(500).json({ status: "error", message: error.message });
     }
-  };
+};
 
 
 export const getCourselistById = async (req, res) => {
     try {
-      const { id } = req.params; 
-
-      const courselist = await CourseListModel.findById(id); 
-  
-      if (!courselist) {
-        return res.status(404).json({ status: "error", message: "Courselist Details not found" });
-      }
-  
-      res.status(200).json({ status: "success", data: courselist });
+        const course = await CourseListModel.findById(req.params.id);
+        if (!course) return res.status(404).json({ status: "error", message: "Course not found" });
+        res.status(200).json({ status: "success", data: course });
     } catch (error) {
-      console.error("Error fetching courselist:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+        res.status(500).json({ status: "error", message: error.message });
     }
-  };
+};
 
 
-  export const updateCourselist = async (req, res) => {
-
-    const ContentType = req.headers["content-type"];
-  
-    if (ContentType && ContentType.includes("multipart/form-data")) {
-  
-   
-     try {
-
-      const { id } = req.params;
-      const updateData = req.body; 
-
-      if(req.imageUrls?.image) {
-        updateData.syllabus=req.imageUrls?.image
-      }
-
-      const existingData = await CourseListModel.find({ _id: { $ne: id } });
-
-      const isCourseExists = existingData.some((doc) => doc.courseName === updateData.courseName);
-      if (isCourseExists) {
-        return res.status(400).json({ status: "error", message: "This course name is already registered." });
-      }
-      
-      const updatedCourselist =  await CourseListModel.updateOne({ _id: id }, { $set: updateData });
-  
-      if (!updatedCourselist) {
-        return res.status(404).json({ status: "error", message: "Course Details not found" });
-      }
-  
-      res.status(200).json({ status: "success", message: "Course Details updated successfully"});
-
-    } catch (error) {
-      console.error("Error updating courselist:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-
-    }
-  };
-
-  
-  export const deleteCourselist = async (req, res) => {
+export const updateCourselist = async (req, res) => {
     try {
-      const { id } = req.params;
-  
-      const deletedCourselist = await CourseListModel.deleteOne({ _id: id });
+        const { id } = req.params;
+        const updateData = { ...req.body };
+
+        if (req.imageUrls?.image) {
+            updateData.syllabus = req.imageUrls.image;
+        }
+
+        if (req.imageUrls?.video) {
+            updateData.video = req.imageUrls.video;
+        }
+
        
-      if (!deletedCourselist) {
-        return res.status(404).json({ status: "error", message: "Course Details are not found" });
-      }
-  
-      res.status(200).json({ status: "success", message: "Course Details deleted successfully" });
+        if (updateData.pricing) {
+            updateData.pricing = Number(updateData.pricing);
+        }
+
+        const updated = await CourseListModel.findByIdAndUpdate(
+            id, 
+            { $set: updateData }, 
+            { new: true }
+        );
+        
+        if (!updated) {
+            return res.status(404).json({ status: "error", message: "Course not found" });
+        }
+
+        res.status(200).json({ 
+            status: "success", 
+            message: "Course updated successfully!", 
+            data: updated 
+        });
+
     } catch (error) {
-      console.error("Error deleting courselist:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+        console.error("Update Controller Error:", error);
+        res.status(500).json({ status: "error", message: error.message });
     }
-    
-  };
+};
+
+
+export const deleteCourselist = async (req, res) => {
+    try {
+        const deleted = await CourseListModel.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ status: "error", message: "Course not found" });
+        
+        res.status(200).json({ status: "success", message: "Deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ status: "error", message: error.message });
+    }
+};

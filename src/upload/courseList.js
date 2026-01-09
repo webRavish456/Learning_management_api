@@ -1,7 +1,7 @@
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
-import dotenv from 'dotenv';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -9,53 +9,38 @@ cloudinary.config({
   cloud_name: "dywpuv3jk",
   api_key: "843216346619295",
   api_secret: "_pM6huf17wznJnFn0VY-Khgph3w",
+  timeout: 600000 
 });
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
     return {
-      folder: 'courseImage',
-      resource_type: 'auto',
-      allowedFormats: [
-        'jpeg', 'jpg', 'png', 'gif', 'svg', 'webp', 'bmp', 'tiff', 'jfif',
-        'pdf', 'docx', 'doc', 'xlsx', 'ppt', 'pptx',
-      ],
-      public_id: `${Date.now()}-${file.originalname}`,
+      folder: 'courseMaterials', 
+      resource_type: 'auto', // ✅ Video/PDF के लिए अनिवार्य
+      public_id: `${Date.now()}-${file.originalname.split('.')[0]}`,
     };
   },
 });
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB Limit
 }).fields([
-  { name: 'syllabus', maxCount: 1 },  
+  { name: 'syllabus', maxCount: 1 }, 
+  { name: 'video', maxCount: 1 }
 ]);
 
 const uploadCourse = (req, res, next) => {
-  upload(req, res, async (err) => {
+  upload(req, res, (err) => {
     if (err) {
-      console.error('Multer error:', err);
-      if (err.code === 'LIMIT_FILE_SIZE') {
-        return res.status(400).json({ status: 'error', message: 'File size too large. Max size is 10MB.' });
-      }
       return res.status(500).json({ status: 'error', message: err.message });
     }
-
     const files = req.files;
-
     const imageUrls = {};
-
-    if (files && files['syllabus'] && files['syllabus'][0]) {
-      imageUrls.image = files['syllabus'][0].path;
-    }
-
-    if (Object.keys(imageUrls).length > 0) {
-      req.imageUrls = imageUrls;
-     
-    }
-
+    if (files?.['syllabus']?.[0]) imageUrls.image = files['syllabus'][0].path;
+    if (files?.['video']?.[0]) imageUrls.video = files['video'][0].path;
+    req.imageUrls = imageUrls;
     next();
   });
 };
