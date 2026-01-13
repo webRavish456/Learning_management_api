@@ -4,7 +4,7 @@ import cors from 'cors';
 import compression from 'compression';
 import Router from './src/routes/routes.js';
 
-const PORT = process.env.PORT || 8121;
+const PORT = process.env.PORT || 8000;
 const app = express();
 
 app.use(cors());
@@ -21,3 +21,4 @@ connectDB().then(() => {
 }).catch((err) => {
   console.error('❌ Database connection failed:', err);
 });
+

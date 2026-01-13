@@ -2,10 +2,10 @@ import express from 'express';
 import verifyToken from '../middleware/auth.js';
 import multer from 'multer';
 
-// टेक्स्ट-ओनली FormData को पार्स करने के लिए multer (बिना फाइल के लिए)
+
 const uploadNone = multer().none();
 
-// Upload middlewares (Files के लिए)
+
 import uploadProfile from '../upload/profile.js';
 import uploadCourse from '../upload/courseList.js';
 import uploadDocument from '../upload/document.js';
@@ -13,7 +13,7 @@ import uploadTeacher from '../upload/teacher.js';
 import uploadCertificates from '../upload/certificates.js';
 import uploadStudentresult from '../upload/studentresult.js';
 
-// Controllers
+
 import { deleteBranch, getBranch, getBranchById, postBranch, updateBranch } from '../controllers/branchControllers.js';
 import { deleteExam, getExam, getExamById, postExam, updateExam } from '../controllers/examControllers.js';
 import { postCourselist, getCourselist, getCourselistById, updateCourselist, deleteCourselist } from '../controllers/courselistControllers.js';
@@ -103,16 +103,29 @@ router.route('/teacher/:id')
   .get(verifyToken, getTeacherById)
   .patch(verifyToken, uploadTeacher, updateTeacher)
   .delete(verifyToken, deleteTeacher);
+/* =================== Students (FIXED ROUTE) =================== */
 
-/* =================== Students (FIXED) =================== */
+
+// ✅ Sabse pehle '/studentlist' ko rakhein (Frontend iska use kar raha hai)
+router.route('/studentlist')
+  .post(verifyToken, postAllStudents) // Yahan se uploadNone hata diya hai taaki JSON submit ho sake
+  .get(verifyToken, getAllStudents);
+
+router.route('/studentlist/:id')
+  .get(verifyToken, getAllStudentsById)
+  .patch(verifyToken, updateAllStudents) // ID based update bina uploadNone ke
+  .delete(verifyToken, deleteAllStudents);
+
+// ✅ Backwards compatibility ke liye purana '/allstudents' route (optional)
 router.route('/allstudents')
-  .post(verifyToken, uploadNone, postAllStudents) // ✅ uploadNone added
+  .post(verifyToken, postAllStudents)
   .get(verifyToken, getAllStudents);
 
 router.route('/allstudents/:id')
   .get(verifyToken, getAllStudentsById)
-  .patch(verifyToken, uploadNone, updateAllStudents) // ✅ uploadNone added
+  .patch(verifyToken, updateAllStudents)
   .delete(verifyToken, deleteAllStudents);
+
 
 /* =================== Results & Others =================== */
 router.route('/result')

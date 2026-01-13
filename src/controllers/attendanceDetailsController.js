@@ -1,6 +1,6 @@
 import Attendance from "../models/attendanceDetails.js";
 
-// ✅ Create (Mark Attendance)
+
 export const markAttendance = async (req, res) => {
   try {
     const { user, date, status, checkInTime, checkOutTime, notes } = req.body;
@@ -26,7 +26,6 @@ export const markAttendance = async (req, res) => {
   }
 };
 
-// ✅ Get All Attendance Records
 export const getAllAttendance = async (req, res) => {
   try {
     const records = await Attendance.find().populate("user", "name email");
@@ -36,7 +35,7 @@ export const getAllAttendance = async (req, res) => {
   }
 };
 
-// ✅ Get Attendance by User ID
+
 export const getAttendanceByUser = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -47,7 +46,7 @@ export const getAttendanceByUser = async (req, res) => {
   }
 };
 
-// ✅ Update Attendance
+
 export const updateAttendance = async (req, res) => {
   try {
     const { id } = req.params;
@@ -65,7 +64,6 @@ export const updateAttendance = async (req, res) => {
   }
 };
 
-// ✅ Delete Attendance Record
 export const deleteAttendance = async (req, res) => {
   try {
     const { id } = req.params;

@@ -1,11 +1,11 @@
 import DailyLog from "../models/dailyLog.js";
 
-// ✅ Create a new daily log entry
+
 export const createDailyLog = async (req, res) => {
   try {
     const { profile, punchedIn, punchedOut, behavior, breakTime, entry } = req.body;
 
-    // Validate required fields
+ 
     if (!profile || !punchedIn) {
       return res.status(400).json({
         success: false,
@@ -13,11 +13,11 @@ export const createDailyLog = async (req, res) => {
       });
     }
 
-    // Auto-calculate total hours if punchedOut is provided
+    
     let totalHours = 0;
     if (punchedOut) {
       const diffMs = new Date(punchedOut) - new Date(punchedIn);
-      totalHours = diffMs / (1000 * 60 * 60); // Convert milliseconds to hours
+      totalHours = diffMs / (1000 * 60 * 60); 
       totalHours = parseFloat(totalHours.toFixed(2));
     }
 
@@ -48,7 +48,7 @@ export const createDailyLog = async (req, res) => {
   }
 };
 
-// ✅ Get all daily logs
+
 export const getAllDailyLogs = async (req, res) => {
   try {
     const logs = await DailyLog.find().sort({ createdAt: -1 });
@@ -63,7 +63,7 @@ export const getAllDailyLogs = async (req, res) => {
   }
 };
 
-// ✅ Get daily log by ID
+
 export const getDailyLogById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -84,13 +84,13 @@ export const getDailyLogById = async (req, res) => {
   }
 };
 
-// ✅ Update daily log
+
 export const updateDailyLog = async (req, res) => {
   try {
     const { id } = req.params;
     const { punchedIn, punchedOut, behavior, breakTime, entry } = req.body;
 
-    // Calculate total hours if both times are available
+    
     let totalHours = 0;
     if (punchedIn && punchedOut) {
       const diffMs = new Date(punchedOut) - new Date(punchedIn);
@@ -126,7 +126,7 @@ export const updateDailyLog = async (req, res) => {
   }
 };
 
-// ✅ Delete daily log
+
 export const deleteDailyLog = async (req, res) => {
   try {
     const { id } = req.params;

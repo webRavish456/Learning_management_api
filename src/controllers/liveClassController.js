@@ -23,7 +23,7 @@ export const createLiveClass = async (req, res) => {
     const savedClass = await newClass.save();
     res.status(201).json({ success: true, data: savedClass });
   } catch (error) {
-    req.status(500).json({ success: false, message: error.message });
+    re.status(500).json({ success: false, message: error.message });
   }
 };
 

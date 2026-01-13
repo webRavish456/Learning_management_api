@@ -19,7 +19,7 @@ export const postTimetable = async (req, res) => {
     try {
   
       const { courseName, teacherName,startTiming,lastTiming,workDays,status} = req.body;
-      console.log(req.body)  //check
+      console.log(req.body)
   
       if (! courseName|| !teacherName|| !startTiming|| !lastTiming|| !workDays) {
         return res.status(400).json({ status: "error", message: "All fields are required" });

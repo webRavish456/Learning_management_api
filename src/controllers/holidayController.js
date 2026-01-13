@@ -99,7 +99,6 @@ export const getHolidayById = async (req, res) => {
 };
 
 /* ================= UPDATE HOLIDAY ================= */
-/* ================= UPDATE HOLIDAY ================= */
 export const updateHoliday = async (req, res) => {
   const contentType = req.headers["content-type"];
 

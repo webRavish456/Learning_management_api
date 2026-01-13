@@ -3,44 +3,48 @@ import mongoose from "mongoose";
 const leaveStatusSchema = new mongoose.Schema(
   {
     profile: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      type: String,
+      required: [true, "Profile name is required"], // User ka naam (e.g., Arjun)
+      trim: true,
     },
-
     date: {
       type: Date,
-      required: true,
+      required: [true, "Date is required"],
+      default: Date.now,
     },
-
     time: {
       type: Date,
-      required: true,
+      required: [true, "Time is required"],
+      default: Date.now,
     },
-
     leaveDuration: {
-      type: Number,
-      required: true,
-    },
-
-    leaveType: {
-      type: Number,
-      required: true,
-    },
-
-    attachments: {
       type: String,
-      required: false,
+      required: [true, "Leave duration is required"], // e.g., "2 Days"
     },
-
+    leaveType: {
+      type: String,
+      required: [true, "Leave type is required"], // e.g., "Sick", "Casual"
+    },
     activity: {
       type: String,
-      required: true,
+      required: [true, "Activity status is required"],
+      enum: ["Pending", "Approved", "Rejected"], // Sirf yahi options allow honge
+      default: "Pending",
+    },
+    reason: {
+      type: String,
+      required: [true, "Reason for leave is required"], // Form ka 'reason' field
+    },
+    attachments: {
+      type: String, // PDF link ya image path ke liye
+      default: null,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true, 
+  }
 );
 
-const leaveStatusModel = mongoose.model("LeaveStatus", leaveStatusSchema);
+const leaveStatusModel = mongoose.models.LeaveStatus || mongoose.model("LeaveStatus", leaveStatusSchema);
 
 export default leaveStatusModel;

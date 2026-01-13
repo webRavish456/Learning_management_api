@@ -1,96 +1,121 @@
 import leaveStatusModel from "../models/leaveStatusModel.js";
 
-/* CREATE LEAVE STATUS */
+/* ✅ CREATE LEAVE STATUS */
 export const createLeaveStatus = async (req, res) => {
   try {
-    const { profile, date, time, leaveDuration, leaveType, activity, attachments } = req.body;
+    // Destructuring fields from request body
+    const { 
+      profile, 
+      date, 
+      time, 
+      leaveDuration, 
+      leaveType, 
+      activity, 
+      reason, 
+      attachments 
+    } = req.body;
 
-    if (!profile || !date || !time || !leaveDuration || !leaveType || !activity) {
+    // 1. Validation: Check if all mandatory fields are present
+    if (!profile || !date || !time || !leaveDuration || !leaveType || !activity || !reason) {
       return res.status(400).json({
         success: false,
-        message: "All fields except attachments are required",
+        message: "All fields (profile, date, time, duration, type, activity, reason) are required.",
       });
     }
 
+    // 2. Database Entry
     const newStatus = await leaveStatusModel.create({
       profile,
       date: new Date(date),
       time: new Date(time),
       leaveDuration,
       leaveType,
-      activity,
+      activity: activity || "Pending", // Default to Pending if not provided
+      reason,
       attachments: attachments || null,
     });
 
-    const { _id, __v, ...statusData } = newStatus.toObject();
-
+    // 3. Response: Sending back the created object (including _id for frontend)
     res.status(201).json({
       success: true,
       message: "Leave status created successfully",
-      data: statusData,
+      data: newStatus,
     });
+
   } catch (error) {
+    console.error("Controller Error:", error.message);
+    
+    // Mongoose Validation Error Handling
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map(val => val.message).join(", ");
       return res.status(400).json({ success: false, message: messages });
     }
-    res.status(500).json({ success: false, message: error.message });
+    
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-/* GET ALL LEAVE STATUS */
+/* ✅ GET ALL LEAVE STATUS */
 export const getAllLeaveStatus = async (req, res) => {
   try {
-    const statuses = await leaveStatusModel.find().sort({ date: -1 });
-    const data = statuses.map((status) => {
-      const { _id, __v, ...statusData } = status.toObject();
-      return statusData;
-    });
+    // Latest leaves first (date based sorting)
+    const statuses = await leaveStatusModel.find().sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
-      message: "All leave statuses fetched successfully",
-      data,
+      count: statuses.length,
+      data: statuses,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-/* GET BY ID */
+/* ✅ GET BY ID */
 export const getLeaveStatusById = async (req, res) => {
   try {
     const status = await leaveStatusModel.findById(req.params.id);
-    if (!status) return res.status(404).json({ success: false, message: "Leave status not found" });
-
-    const { _id, __v, ...statusData } = status.toObject();
-    res.status(200).json({ success: true, message: "Leave status fetched successfully", data: statusData });
+    if (!status) {
+      return res.status(404).json({ success: false, message: "Record not found" });
+    }
+    res.status(200).json({ success: true, data: status });
   } catch (error) {
-    res.status(400).json({ success: false, message: "Invalid leave status ID" });
+    res.status(400).json({ success: false, message: "Invalid ID format" });
   }
 };
 
-/* UPDATE */
+/* ✅ UPDATE STATUS */
 export const updateLeaveStatus = async (req, res) => {
   try {
-    const updated = await leaveStatusModel.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!updated) return res.status(404).json({ success: false, message: "Leave status not found" });
+    const updated = await leaveStatusModel.findByIdAndUpdate(
+      req.params.id, 
+      req.body, 
+      { new: true, runValidators: true }
+    );
 
-    const { _id, __v, ...statusData } = updated.toObject();
-    res.status(200).json({ success: true, message: "Leave status updated successfully", data: statusData });
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Record not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Leave status updated successfully",
+      data: updated,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-/* DELETE */
+/* ✅ DELETE STATUS */
 export const deleteLeaveStatus = async (req, res) => {
   try {
     const deleted = await leaveStatusModel.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ success: false, message: "Leave status not found" });
-
-    res.status(200).json({ success: true, message: "Leave status deleted successfully" });
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Record not found" });
+    }
+    res.status(200).json({ success: true, message: "Deleted successfully" });
   } catch (error) {
-    res.status(400).json({ success: false, message: "Invalid leave status ID" });
+    res.status(400).json({ success: false, message: "Invalid ID" });
   }
 };

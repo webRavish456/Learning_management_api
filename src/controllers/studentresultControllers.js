@@ -1,64 +1,118 @@
 import StudentresultModel from "../models/studentresultModel.js";
 import AllStudentsModel from "../models/allstudentsModels.js";
+import mongoose from "mongoose";
 
-// Create a new student result
+// ID format check karne ke liye utility
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+/* ============================
+    ✅ POST STUDENT RESULT
+============================ */
 export const postStudentresult = async (req, res) => {
     try {
-        const { studentName, mobileNumber, resultId, courseName, marksObtained, totalMarks, passingMarks, status } = req.body;
+        const { 
+            studentName, mobileNumber, resultId, courseName, 
+            marksObtained, totalMarks, passingMarks, status 
+        } = req.body;
 
-        const existingStudent = await AllStudentsModel.findOne({ mobileNumber });
-        if (!existingStudent) {
-            return res.status(404).json({ status: "error", message: "Student not found in master list." });
+        // 1. Validation: Sabhi fields zaroori hain
+        if (!studentName || !mobileNumber || !resultId || !courseName || !marksObtained || !totalMarks || !passingMarks) {
+            return res.status(400).json({ 
+                status: "error", 
+                message: "All fields are required to create a result." 
+            });
         }
 
-        const existingResult = await StudentresultModel.findOne({ mobileNumber });
+        // 2. Master list mein student check karein
+        const existingStudent = await AllStudentsModel.findOne({ mobileNumber });
+        if (!existingStudent) {
+            return res.status(404).json({ 
+                status: "error", 
+                message: "Student not found in master list. Please check the mobile number." 
+            });
+        }
+
+        // 3. Duplicate check: Ek student ka ek hi resultId ke liye result ho sakta hai
+        const existingResult = await StudentresultModel.findOne({ mobileNumber, resultId });
         if (existingResult) {
-            return res.status(400).json({ status: "error", message: "Result already exists for this student." });
+            return res.status(400).json({ 
+                status: "error", 
+                message: "Result already exists for this student and result ID." 
+            });
         }
 
         const sheet = req.imageUrls?.image || null;
 
+        // 4. Result create karein
         const newResult = await StudentresultModel.create({
-            studentName, courseName, marksObtained, totalMarks, 
-            passingMarks, sheet, status, resultId, mobileNumber 
+            studentName, 
+            courseName, 
+            marksObtained: Number(marksObtained), 
+            totalMarks: Number(totalMarks), 
+            passingMarks: Number(passingMarks), 
+            sheet, 
+            status: status || "Active", 
+            resultId, 
+            mobileNumber 
         });
 
-        res.status(201).json({ status: "success", message: "Studentresult created successfully!" });
+        return res.status(201).json({ 
+            status: "success", 
+            message: "Student result created successfully!", 
+            data: newResult 
+        });
+
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Internal server error" });
+        console.error("Post Result Error:", error);
+        return res.status(500).json({ status: "error", message: "Internal server error" });
     }
 };
 
-// Get results by resultId
+/* ============================
+    ✅ GET ALL RESULTS BY RESULT-ID
+============================ */
 export const getStudentresult = async (req, res) => {
     try {
         const { resultId } = req.params;
-        const studentresult = await StudentresultModel.find({ resultId });
-        res.status(200).json({ status: "success", data: studentresult });
+        const studentresults = await StudentresultModel.find({ resultId }).sort({ createdAt: -1 });
+        return res.status(200).json({ status: "success", data: studentresults });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Internal server error" });
+        return res.status(500).json({ status: "error", message: "Internal server error" });
     }
 };
 
-// Get a specific result by ID and resultId
+/* ============================
+    ✅ GET RESULT BY ID & RESULT-ID
+============================ */
 export const getStudentresultById = async (req, res) => {
     try {
         const { id, resultId } = req.params;
+
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({ status: "error", message: "Invalid ID format" });
+        }
+
         const studentresult = await StudentresultModel.findOne({ _id: id, resultId });
         if (!studentresult) {
             return res.status(404).json({ status: "error", message: "Student Result not found" });
         }
-        res.status(200).json({ status: "success", data: studentresult });
+        return res.status(200).json({ status: "success", data: studentresult });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Internal server error" });
+        return res.status(500).json({ status: "error", message: "Internal server error" });
     }
 };
 
-// Update a student result
+/* ============================
+    ✅ UPDATE STUDENT RESULT
+============================ */
 export const updateStudentresult = async (req, res) => {
     try {
         const { id, resultId } = req.params;
         const updateData = req.body;
+
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({ status: "error", message: "Invalid ID format" });
+        }
 
         if (req.imageUrls?.image) {
             updateData.sheet = req.imageUrls.image;
@@ -73,23 +127,34 @@ export const updateStudentresult = async (req, res) => {
         if (!updated) {
             return res.status(404).json({ status: "error", message: "Student Result not found" });
         }
-        res.status(200).json({ status: "success", message: "Student Result updated successfully" });
+        return res.status(200).json({ 
+            status: "success", 
+            message: "Student Result updated successfully",
+            data: updated
+        });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Internal server error" });
+        return res.status(500).json({ status: "error", message: "Internal server error" });
     }
 };
 
-// ✅ ADDED: This fixes your SyntaxError/Import error
+/* ============================
+    ✅ DELETE STUDENT RESULT
+============================ */
 export const deleteStudentresult = async (req, res) => {
     try {
         const { id, resultId } = req.params;
+
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({ status: "error", message: "Invalid ID format" });
+        }
+
         const result = await StudentresultModel.deleteOne({ _id: id, resultId });
         
         if (result.deletedCount === 0) {
             return res.status(404).json({ status: "error", message: "Student Result not found" });
         }
-        res.status(200).json({ status: "success", message: "Student Result deleted successfully" });
+        return res.status(200).json({ status: "success", message: "Student Result deleted successfully" });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Internal server error" });
+        return res.status(500).json({ status: "error", message: "Internal server error" });
     }
 };

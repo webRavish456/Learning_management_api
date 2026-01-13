@@ -10,7 +10,7 @@ const holidaySchema = new mongoose.Schema(
     date: {
       type: Date,
       required: true,
-      unique: true, // prevent duplicate dates at DB level
+      unique: true, 
     },
   },
   { timestamps: true }
