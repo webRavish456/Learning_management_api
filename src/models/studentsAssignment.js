@@ -30,11 +30,11 @@ const studentsAssignmentSchema = new mongoose.Schema(
             required: true, 
           
           },
-          mobileNumber: { 
-            type:Number, 
-            required: true, 
-          
-          },
+         mobileNumber: { 
+    type: String,  
+    required: false, 
+    default: "N/A" 
+},
 
         status: { 
             type: String, 

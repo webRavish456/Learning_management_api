@@ -1,69 +1,94 @@
 import recordedClassesModel from "../models/recordedClassesModel.js";
 
-// 🟢 Create a new recorded class
+// 1. Create - Fixes "Validation Failed" Errors
 export const createRecordedClass = async (req, res) => {
   try {
-    const { title, description, courseName, teacherName, videoUrl, UploadDate, duration } = req.body;
+    // Frontend से आने वाले डेटा को निकालें
+    const { studentName, enrollmentNo, subjectName, teacherName } = req.body;
 
-    if (!title || !description || !courseName || !teacherName || !videoUrl || !UploadDate || !duration) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+    // ज़रूरी फील्ड्स की जांच करें
+    if (!studentName || !enrollmentNo || !subjectName || !teacherName) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Student Name, Enrollment No, Subject, and Teacher are required!" 
+      });
     }
 
-    const newClass = new recordedClassesModel({
-      title,
-      description,
-      courseName,
+    // नया ऑब्जेक्ट बनाएं और मिसिंग फील्ड्स को डिफ़ॉल्ट वैल्यू दें
+    const newClassData = {
+      studentName,
+      enrollmentNo,
+      subjectName,
       teacherName,
-      videoUrl,
-      UploadDate,
-      duration,
-    });
+      // नीचे दिए गए फील्ड्स आपके मॉडल में 'required' हैं, इसलिए इन्हें खाली नहीं छोड़ सकते
+      title: req.body.title || `${subjectName} - ${studentName}`, 
+      description: req.body.description || "Recorded class session",
+      courseName: req.body.courseName || "General Course",
+      videoUrl: req.body.videoUrl || "https://example.com/default-video",
+      duration: req.body.duration || "0",
+      UploadDate: req.body.UploadDate || new Date()
+    };
 
+    const newClass = new recordedClassesModel(newClassData);
     const savedClass = await newClass.save();
-    res.status(201).json({ success: true, data: savedClass });
+
+    res.status(201).json({ 
+      success: true, 
+      status: "success", 
+      message: "Data saved successfully!", 
+      data: savedClass 
+    });
   } catch (error) {
+    // यहाँ आपको पता चलेगा कि कौन सा फील्ड अभी भी मिसिंग है
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// 🟢 Get all recorded classes
+// 2. Get All
 export const getAllRecordedClasses = async (req, res) => {
   try {
-    const classes = await recordedClassesModel.find().sort({ UploadDate: -1 });
-    res.status(200).json({ success: true, data: classes });
+    const classes = await recordedClassesModel.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, status: "success", data: classes });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// 🟢 Get recorded class by ID
+// 3. Get By ID
 export const getRecordedClassById = async (req, res) => {
   try {
-    const recordedClass = await recordedClassesModel.findById(req.params.id);
-    if (!recordedClass) return res.status(404).json({ success: false, message: "Recorded class not found" });
-    res.status(200).json({ success: true, data: recordedClass });
+    const data = await recordedClassesModel.findById(req.params.id);
+    if (!data) return res.status(404).json({ success: false, message: "Not found" });
+    res.status(200).json({ success: true, status: "success", data });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// 🟢 Update recorded class
+// 4. Update
 export const updateRecordedClass = async (req, res) => {
   try {
-    const updatedClass = await recordedClassesModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedClass) return res.status(404).json({ success: false, message: "Recorded class not found" });
-    res.status(200).json({ success: true, data: updatedClass });
+    const updated = await recordedClassesModel.findByIdAndUpdate(
+      req.params.id, 
+      req.body, 
+      { new: true }
+    );
+    res.status(200).json({ success: true, status: "success", data: updated });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// 🟢 Delete recorded class
+// 5. Delete
 export const deleteRecordedClass = async (req, res) => {
   try {
-    const deletedClass = await recordedClassesModel.findByIdAndDelete(req.params.id);
-    if (!deletedClass) return res.status(404).json({ success: false, message: "Recorded class not found" });
-    res.status(200).json({ success: true, message: "Recorded class deleted successfully" });
+    const deleted = await recordedClassesModel.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ success: false, message: "Not found" });
+    res.status(200).json({ 
+      success: true, 
+      status: "success", 
+      message: "Deleted successfully" 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

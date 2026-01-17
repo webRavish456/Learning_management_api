@@ -1,5 +1,5 @@
 import multer from "multer";
-import Holiday from "../models/holidaymodel.js";
+import Holiday from "../models/leave-holidaymodel.js";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
