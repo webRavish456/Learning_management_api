@@ -1,54 +1,58 @@
 import mongoose from "mongoose";
 
 const ProfileSchema = new mongoose.Schema(
-   
     {
         profilePhoto: { 
           type: String,  
+          default: "" 
         },
 
         name: { 
           type: String, 
-          required: true 
+          required: [true, "Name is required"],
+          trim: true 
         },
 
         mobileNo: { 
-          type:Number, 
-          required: true,
-          unique:true 
+          type: String,  
+          required: [true, "Mobile number is required"],
+          unique: true 
         },
 
         email: { 
           type: String, 
-          required: true,
+          required: [true, "Email is required"],
           unique: true, 
+          lowercase: true, 
+          trim: true
         },
 
         dob: { 
           type: Date, 
-          required: true 
+          required: [true, "Date of Birth is required"] 
         },
 
         gender: { 
-            type: String, 
+            type: String,
+            enum: ["male", "female", "other"], 
+            default: "male"
           },
 
-          address: { 
+        address: { 
             type: String, 
-            required: true 
+            required: [true, "Address is required"] 
           },
        
         password: { 
           type: String, 
-          required: true 
+          required: [true, "Password is required"],
+          minlength: 6 
         },
           
     },
-
-    { timestamps: true }, 
-
+    { timestamps: true }
 );
 
 const ProfileModel = mongoose.model('profile', ProfileSchema);
 
-export default ProfileModel
+export default ProfileModel;

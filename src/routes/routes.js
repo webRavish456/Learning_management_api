@@ -37,13 +37,10 @@ import { createLeaveStatus, getAllLeaveStatus, getLeaveStatusById, updateLeaveSt
 import { createNotification, getAllNotifications, getNotificationById, updateNotification, deleteNotification } from '../controllers/notificationController.js';
 import { createIncome, getAllIncomes, getIncomeById, updateIncome, deleteIncome } from '../controllers/incomeController.js';
 import { createReceipt, getAllReceipts, getReceiptById, updateReceipt, deleteReceipt } from '../controllers/receiptController.js';
-import { 
-  createExpense, 
-  getAllExpenses, 
-  getExpenseById, 
-  updateExpense, 
-  deleteExpense 
-} from '../controllers/expenseController.js';
+import { createExpense, getAllExpenses, getExpenseById, updateExpense, deleteExpense } from '../controllers/expenseController.js';
+import { createSetting, getAllSetting, getSettingById, updateSetting, deleteSetting } from '../controllers/settingController.js';
+
+import { createRole, getAllRoles, updateRoleStatus, deleteRole } from '../controllers/roleController.js';
 
 const router = express.Router();
 
@@ -52,113 +49,246 @@ router.route('/login').post(postAdmin);
 router.route('/forgot').post(postForgot);
 router.route('/admin/signup').post(postSignup);
 
-/* =================== Branch =================== */
-router.route('/branch').post(verifyToken, postBranch).get(verifyToken, getBranch);
-router.route('/branch/:id').get(verifyToken, getBranchById).put(verifyToken, updateBranch).delete(verifyToken, deleteBranch);
 
-/* =================== Exam =================== */
-router.route('/exam').post(verifyToken, postExam).get(verifyToken, getExam);
-router.route('/exam/:id').get(verifyToken, getExamById).patch(verifyToken, updateExam).delete(verifyToken, deleteExam);
+/* =================== ACADEMIC MANAGEMENT =================== */
+// Branch
+router.route('/branch')
+    .post(verifyToken, postBranch)
+    .get(verifyToken, getBranch);
+router.route('/branch/:id')
+    .get(verifyToken, getBranchById)
+    .put(verifyToken, updateBranch)
+    .delete(verifyToken, deleteBranch);
 
-/* =================== Course List =================== */
-router.route('/courselist').post(verifyToken, uploadCourse, postCourselist).get(verifyToken, getCourselist);
-router.route('/courselist/:id').get(verifyToken, getCourselistById).put(verifyToken, uploadCourse, updateCourselist).delete(verifyToken, deleteCourselist);
+// Exam
+router.route('/exam')
+    .post(verifyToken, postExam)
+    .get(verifyToken, getExam);
+router.route('/exam/:id')
+    .get(verifyToken, getExamById)
+    .patch(verifyToken, updateExam)
+    .delete(verifyToken, deleteExam);
 
-/* =================== Document Sharing =================== */
-router.route('/documentsharing').post(verifyToken, uploadDocument, postDocumentsharing).get(verifyToken, getDocumentsharing);
-router.route('/documentsharing/:id').get(verifyToken, getDocumentsharingById).patch(verifyToken, uploadDocument, updateDocumentsharing).delete(verifyToken, deleteDocumentsharing);
+// Course List
+router.route('/courselist')
+    .post(verifyToken, uploadCourse, postCourselist)
+    .get(verifyToken, getCourselist);
+router.route('/courselist/:id')
+    .get(verifyToken, getCourselistById)
+    .put(verifyToken, uploadCourse, updateCourselist)
+    .delete(verifyToken, deleteCourselist);
 
-/* =================== Assignment =================== */
-router.route('/allAssignment').post(verifyToken, postAllAssignment).get(verifyToken, getAllAssignment);
-router.route('/allAssignment/:id').get(verifyToken, getAllAssignmentById).patch(verifyToken, updateAllAssignment).delete(verifyToken, deleteAllAssignment);
+/* =================== LEARNING & DOCUMENTS =================== */
+// Document Sharing
+router.route('/documentsharing')
+    .post(verifyToken, uploadDocument, postDocumentsharing)
+    .get(verifyToken, getDocumentsharing);
+router.route('/documentsharing/:id')
+    .get(verifyToken, getDocumentsharingById)
+    .patch(verifyToken, uploadDocument, updateDocumentsharing)
+    .delete(verifyToken, deleteDocumentsharing);
 
-/* =================== Students Assignment (Crucial for Create.js) =================== */
+// All Assignments
+router.route('/allAssignment')
+    .post(verifyToken, postAllAssignment)
+    .get(verifyToken, getAllAssignment);
+router.route('/allAssignment/:id')
+    .get(verifyToken, getAllAssignmentById)
+    .patch(verifyToken, updateAllAssignment)
+    .delete(verifyToken, deleteAllAssignment);
+
+// Students Specific Assignment
 router.route('/studentsAssignment')
-  .post(verifyToken, postStudentsAssignment)
-  .get(verifyToken, getStudentsAssignment);
-
+    .post(verifyToken, postStudentsAssignment)
+    .get(verifyToken, getStudentsAssignment);
 router.route('/studentsAssignment/:id')
-  .get(verifyToken, getStudentsAssignmentById)
-  .patch(verifyToken, updateStudentsAssignment)
-  .delete(verifyToken, deleteStudentsAssignment);
+    .get(verifyToken, getStudentsAssignmentById)
+    .patch(verifyToken, updateStudentsAssignment)
+    .delete(verifyToken, deleteStudentsAssignment);
 
-  /* =================== Expense Management =================== */
+/* =================== FINANCE MANAGEMENT =================== */
+// Expenses
 router.route('/expense')
-  .post(verifyToken, uploadNone, createExpense) // Added uploadNone for Postman/Form-data support
-  .get(verifyToken, getAllExpenses);
-
+    .post(verifyToken, uploadNone, createExpense)
+    .get(verifyToken, getAllExpenses);
 router.route('/expense/:id')
-  .get(verifyToken, getExpenseById)
-  .patch(verifyToken, updateExpense)
-  .delete(verifyToken, deleteExpense);
-  /* =================== Income Management =================== */
+    .get(verifyToken, getExpenseById)
+    .patch(verifyToken, updateExpense)
+    .delete(verifyToken, deleteExpense);
+
+// Income
 router.route('/income')
-  .post(verifyToken, uploadNone, createIncome)
-  .get(verifyToken, getAllIncomes);
-
+    .post(verifyToken, uploadNone, createIncome)
+    .get(verifyToken, getAllIncomes);
 router.route('/income/:id')
-  .get(verifyToken, getIncomeById)
-  .patch(verifyToken, updateIncome)
-  .delete(verifyToken, deleteIncome);
+    .get(verifyToken, getIncomeById)
+    .patch(verifyToken, updateIncome)
+    .delete(verifyToken, deleteIncome);
 
+// Receipts
+router.route('/receipt')
+    .post(verifyToken, uploadNone, createReceipt)
+    .get(verifyToken, getAllReceipts);
+router.route('/receipt/:id')
+    .get(verifyToken, getReceiptById)
+    .patch(verifyToken, updateReceipt)
+    .delete(verifyToken, deleteReceipt);
 
-  // Receipts
-router.route('/receipt').post(verifyToken, uploadNone, createReceipt).get(verifyToken, getAllReceipts);
-router.route('/receipt/:id').get(verifyToken, getReceiptById).patch(verifyToken, updateReceipt).delete(verifyToken, deleteReceipt);
-/* =================== Teacher =================== */
-router.route('/teacher').post(verifyToken, uploadTeacher, postTeacher).get(verifyToken, getTeacher);
-router.route('/teacher/:id').get(verifyToken, getTeacherById).patch(verifyToken, uploadTeacher, updateTeacher).delete(verifyToken, deleteTeacher);
+/* =================== USER MANAGEMENT =================== */
+// Teacher
+router.route('/teacher')
+    .post(verifyToken, uploadTeacher, postTeacher)
+    .get(verifyToken, getTeacher);
+router.route('/teacher/:id')
+    .get(verifyToken, getTeacherById)
+    .patch(verifyToken, uploadTeacher, updateTeacher)
+    .delete(verifyToken, deleteTeacher);
 
-/* =================== Students =================== */
-router.route('/allstudents').post(verifyToken, postAllStudents).get(verifyToken, getAllStudents);
-router.route('/allstudents/:id').get(verifyToken, getAllStudentsById).patch(verifyToken, updateAllStudents).delete(verifyToken, deleteAllStudents);
+// Students
+router.route('/allstudents')
+    .post(verifyToken, postAllStudents)
+    .get(verifyToken, getAllStudents);
+router.route('/allstudents/:id')
+    .get(verifyToken, getAllStudentsById)
+    .patch(verifyToken, updateAllStudents)
+    .delete(verifyToken, deleteAllStudents);
 
-/* =================== Results & Others =================== */
-router.route('/result').post(verifyToken, postResult).get(verifyToken, getResult);
-router.route('/result/:id').get(verifyToken, getResultById).patch(verifyToken, updatedResult).delete(verifyToken, deletedResult);
+// Staff
+router.route('/staff')
+    .post(verifyToken, createStaff)
+    .get(verifyToken, getAllStaff);
+router.route('/staff/:id')
+    .get(verifyToken, getStaffById)
+    .patch(verifyToken, updateStaff)
+    .delete(verifyToken, deleteStaff);
 
-router.route('/studentresult').post(verifyToken, uploadStudentresult, postStudentresult);
-router.route('/studentresult/:resultId').get(verifyToken, getStudentresult);
-router.route('/studentresult/:id/:resultId').get(verifyToken, getStudentresultById).patch(verifyToken, uploadStudentresult, updateStudentresult).delete(verifyToken, deleteStudentresult);
+/* =================== RESULTS & RECORDS =================== */
+// Exam Results
+router.route('/result')
+    .post(verifyToken, postResult)
+    .get(verifyToken, getResult);
+router.route('/result/:id')
+    .get(verifyToken, getResultById)
+    .patch(verifyToken, updatedResult)
+    .delete(verifyToken, deletedResult);
 
-router.route('/certificates').post(verifyToken, uploadCertificates, postCertificates).get(verifyToken, getCertificates);
-router.route('/certificates/:id').get(verifyToken, getCertificatesById).patch(verifyToken, uploadCertificates, updateCertificates).delete(verifyToken, deleteCertificates);
+// Individual Student Results
+router.route('/studentresult')
+    .post(verifyToken, uploadStudentresult, postStudentresult);
+router.route('/studentresult/:resultId')
+    .get(verifyToken, getStudentresult);
+router.route('/studentresult/:id/:resultId')
+    .get(verifyToken, getStudentresultById)
+    .patch(verifyToken, uploadStudentresult, updateStudentresult)
+    .delete(verifyToken, deleteStudentresult);
 
-router.route('/timetable').post(verifyToken, postTimetable).get(verifyToken, getTimetable);
-router.route('/timetable/:id').get(verifyToken, getTimetableById).patch(verifyToken, updateTimetable).delete(verifyToken, deleteTimetable);
+// Certificates
+router.route('/certificates')
+    .post(verifyToken, uploadCertificates, postCertificates)
+    .get(verifyToken, getCertificates);
+router.route('/certificates/:id')
+    .get(verifyToken, getCertificatesById)
+    .patch(verifyToken, uploadCertificates, updateCertificates)
+    .delete(verifyToken, deleteCertificates);
 
-router.route('/profile').post(verifyToken, uploadProfile, postProfile);
-router.route('/profile/:id').get(verifyToken, getProfile).patch(verifyToken, uploadProfile, updateProfile);
+/* =================== OPERATIONS =================== */
+// Timetable
+router.route('/timetable')
+    .post(verifyToken, postTimetable)
+    .get(verifyToken, getTimetable);
+router.route('/timetable/:id')
+    .get(verifyToken, getTimetableById)
+    .patch(verifyToken, updateTimetable)
+    .delete(verifyToken, deleteTimetable);
 
-/* =================== Staff, Classes, Bills, etc. =================== */
-router.route('/staff').post(verifyToken, createStaff).get(verifyToken, getAllStaff);
-router.route('/staff/:id').get(verifyToken, getStaffById).patch(verifyToken, updateStaff).delete(verifyToken, deleteStaff);
+// Profile
+router.route('/profile')
+    .post(verifyToken, uploadProfile, postProfile);
+router.route('/profile/:id')
+    .get(verifyToken, getProfile)
+    .patch(verifyToken, uploadProfile, updateProfile);
+
+// Classes (Live & Recorded)
 router.route('/live-class')
-  .post(verifyToken, uploadNone, createLiveClass) // ✅ uploadNone जोड़ा गया
-  .get(verifyToken, getAllLiveClasses);
-
-// Recorded-Class के लिए uploadNone जोड़ें
+    .post(verifyToken, uploadNone, createLiveClass)
+    .get(verifyToken, getAllLiveClasses);
 router.route('/recorded-class')
-  .post(verifyToken, uploadNone, createRecordedClass) // ✅ uploadNone जोड़ा गया
-  .get(verifyToken, getAllRecordedClasses);
-router.route('/bill').post(verifyToken, createBill).get(verifyToken, getAllBills);
-router.route('/bill/:id').get(verifyToken, getBillById).patch(verifyToken, updateBill).delete(verifyToken, deleteBill);
+    .post(verifyToken, uploadNone, createRecordedClass)
+    .get(verifyToken, getAllRecordedClasses);
 
-router.route('/holiday').post(verifyToken, createHoliday).get(verifyToken, getAllHolidays);
-router.route('/holiday/:id').get(verifyToken, getHolidayById).patch(verifyToken, updateHoliday).delete(verifyToken, deleteHoliday);
+// Bills
+router.route('/bill')
+    .post(verifyToken, createBill)
+    .get(verifyToken, getAllBills);
+router.route('/bill/:id')
+    .get(verifyToken, getBillById)
+    .patch(verifyToken, updateBill)
+    .delete(verifyToken, deleteBill);
 
-router.route('/leave-request').post(verifyToken, createLeaveRequest).get(verifyToken, getAllLeaveRequests);
-router.route('/leave-request/:id').get(verifyToken, getLeaveRequestById).patch(verifyToken, updateLeaveRequest).delete(verifyToken, deleteLeaveRequest);
+    
 
-router.route('/leave-status').post(verifyToken, createLeaveStatus).get(verifyToken, getAllLeaveStatus);
-router.route('/leave-status/:id').get(verifyToken, getLeaveStatusById).patch(verifyToken, updateLeaveStatus).delete(verifyToken, deleteLeaveStatus);
+/* =================== HR & NOTIFICATIONS =================== */
+// Holidays
+router.route('/holiday')
+    .post(verifyToken, createHoliday)
+    .get(verifyToken, getAllHolidays);
+router.route('/holiday/:id')
+    .get(verifyToken, getHolidayById)
+    .patch(verifyToken, updateHoliday)
+    .delete(verifyToken, deleteHoliday);
 
-router.route('/notification').post(verifyToken, createNotification).get(verifyToken, getAllNotifications);
-router.route('/notification/:id').get(verifyToken, getNotificationById).patch(verifyToken, updateNotification).delete(verifyToken, deleteNotification);
+// Leave Requests
+router.route('/leave-request')
+    .post(verifyToken, createLeaveRequest)
+    .get(verifyToken, getAllLeaveRequests);
+router.route('/leave-request/:id')
+    .get(verifyToken, getLeaveRequestById)
+    .patch(verifyToken, updateLeaveRequest)
+    .delete(verifyToken, deleteLeaveRequest);
 
-/* =================== TEST ROUTE =================== */
+// Leave Status
+router.route('/leave-status')
+    .post(verifyToken, createLeaveStatus)
+    .get(verifyToken, getAllLeaveStatus);
+router.route('/leave-status/:id')
+    .get(verifyToken, getLeaveStatusById)
+    .patch(verifyToken, updateLeaveStatus)
+    .delete(verifyToken, deleteLeaveStatus);
+
+// Notifications
+router.route('/notification')
+    .post(verifyToken, createNotification)
+    .get(verifyToken, getAllNotifications);
+router.route('/notification/:id')
+    .get(verifyToken, getNotificationById)
+    .patch(verifyToken, updateNotification)
+    .delete(verifyToken, deleteNotification);
+
+
+/* =================== SYSTEM SETTINGS =================== */
+// Settings CRUD
+router.route('/setting')
+    .post(verifyToken, uploadNone, createSetting) 
+    .get(verifyToken, getAllSetting);
+
+router.route('/setting/:id')
+    .get(verifyToken, getSettingById)
+    .patch(verifyToken, uploadNone, updateSetting)
+    .delete(verifyToken, deleteSetting);
+
+// Role Management CRUD
+router.route('/roles')
+    .post(verifyToken, uploadNone, createRole)
+    .get(verifyToken, getAllRoles);
+
+router.route('/roles/:id')
+    .patch(verifyToken, uploadNone, updateRoleStatus)
+    .delete(verifyToken, deleteRole);
+
+
+/* =================== SYSTEM TEST =================== */
 router.get("/test-db", async (req, res) => {
-  res.status(200).json({ message: "✅ Database connection is working fine!" });
+    res.status(200).json({ message: "✅ Database connection is working fine!" });
 });
 
 export default router;
