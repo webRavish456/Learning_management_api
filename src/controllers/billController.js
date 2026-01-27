@@ -1,7 +1,6 @@
 import Bill from "../models/billModule.js";
 
-// 🟢 1. Create a new bill
-// Added 'export' to fix the SyntaxError
+
 export const createBill = async (req, res) => {
   try {
     const { 
@@ -9,7 +8,7 @@ export const createBill = async (req, res) => {
       tax, discount, paidAmount, totalAmount, status 
     } = req.body;
 
-    // Calculate dueAmount automatically as per schema requirements
+    
     const calculatedDue = Number(totalAmount || 0) - Number(paidAmount || 0);
 
     const newBill = await Bill.create({
@@ -36,7 +35,7 @@ export const createBill = async (req, res) => {
   }
 };
 
-// 🟢 2. Get all bills
+
 export const getAllBills = async (req, res) => {
   try {
     const bills = await Bill.find().sort({ createdAt: -1 });
@@ -50,7 +49,7 @@ export const getAllBills = async (req, res) => {
   }
 };
 
-// 🟢 3. Get bill by ID
+
 export const getBillById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -67,17 +66,17 @@ export const getBillById = async (req, res) => {
   }
 };
 
-// 🟢 4. Update bill
+
 export const updateBill = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = { ...req.body };
 
-    // Ensure numeric fields are converted if they are being updated
+   
     if (updateData.totalAmount) updateData.totalAmount = Number(updateData.totalAmount);
     if (updateData.paidAmount) updateData.paidAmount = Number(updateData.paidAmount);
     
-    // Recalculate due if amounts change
+  
     if (updateData.totalAmount !== undefined || updateData.paidAmount !== undefined) {
         const currentBill = await Bill.findById(id);
         const total = updateData.totalAmount ?? currentBill.totalAmount;
@@ -100,7 +99,7 @@ export const updateBill = async (req, res) => {
   }
 };
 
-// 🟢 5. Delete bill
+
 export const deleteBill = async (req, res) => {
   try {
     const { id } = req.params;

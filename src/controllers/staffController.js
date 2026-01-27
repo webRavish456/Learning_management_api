@@ -1,14 +1,9 @@
 import mongoose from "mongoose";
 import StaffModel from "../models/staffmodel.js";
 
-/* ============================
-   🔧 Utility
-============================ */
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-/* ============================
-   ✅ CREATE STAFF
-============================ */
+/* ================= CREATE STAFF ================= */
 const createStaff = async (req, res) => {
   try {
     const {
@@ -19,18 +14,25 @@ const createStaff = async (req, res) => {
       address,
       salary,
       joiningDate,
-      status,
     } = req.body;
 
-    // ✅ Required fields
-    if (!staffName || !email || !mobileNO || !designation || !status) {
+    // ✅ CORRECT VALIDATION
+    if (
+      !staffName ||
+      !email ||
+      !mobileNO ||
+      !designation ||
+      !address ||
+      salary === undefined ||
+      !joiningDate
+    ) {
       return res.status(400).json({
         status: "error",
         message: "All required fields must be filled",
       });
     }
 
-    // ✅ Email uniqueness
+    // ✅ UNIQUE EMAIL CHECK
     const existingStaff = await StaffModel.findOne({ email });
     if (existingStaff) {
       return res.status(409).json({
@@ -39,16 +41,15 @@ const createStaff = async (req, res) => {
       });
     }
 
-    // ✅ Create staff
+    // ✅ CREATE STAFF
     const newStaff = await StaffModel.create({
       staffName,
       email,
       mobileNO,
       designation,
-      address: address || "",
-      salary: salary || null,
-      joiningDate: joiningDate || null,
-      status,
+      address,
+      salary,
+      joiningDate,
     });
 
     return res.status(201).json({
@@ -60,14 +61,12 @@ const createStaff = async (req, res) => {
     console.error("Create Staff Error:", error);
     return res.status(500).json({
       status: "error",
-      message: "Internal Server Error",
+      message: error.message,
     });
   }
 };
 
-/* ============================
-   ✅ GET ALL STAFF
-============================ */
+/* ================= GET ALL STAFF ================= */
 const getAllStaff = async (req, res) => {
   try {
     const staffList = await StaffModel.find().sort({ createdAt: -1 });
@@ -85,9 +84,7 @@ const getAllStaff = async (req, res) => {
   }
 };
 
-/* ============================
-   ✅ GET STAFF BY ID
-============================ */
+/* ================= GET STAFF BY ID ================= */
 const getStaffById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -120,9 +117,7 @@ const getStaffById = async (req, res) => {
   }
 };
 
-/* ============================
-   ✅ UPDATE STAFF
-============================ */
+/* ================= UPDATE STAFF ================= */
 const updateStaff = async (req, res) => {
   try {
     const { id } = req.params;
@@ -135,7 +130,6 @@ const updateStaff = async (req, res) => {
       });
     }
 
-    // Email conflict check
     if (updateData.email) {
       const existing = await StaffModel.findOne({
         email: updateData.email,
@@ -176,9 +170,7 @@ const updateStaff = async (req, res) => {
   }
 };
 
-/* ============================
-   ✅ DELETE STAFF
-============================ */
+/* ================= DELETE STAFF ================= */
 const deleteStaff = async (req, res) => {
   try {
     const { id } = req.params;
@@ -212,9 +204,6 @@ const deleteStaff = async (req, res) => {
   }
 };
 
-/* ============================
-   🚀 FINAL EXPORTS
-============================ */
 export {
   createStaff,
   getAllStaff,

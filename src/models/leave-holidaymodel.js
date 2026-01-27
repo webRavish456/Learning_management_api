@@ -16,7 +16,6 @@ const holidaySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// remove _id & __v from JSON responses (optional but clean)
 holidaySchema.set("toJSON", {
   transform: (doc, ret) => {
     delete ret.__v;

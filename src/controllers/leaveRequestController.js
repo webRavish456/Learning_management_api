@@ -1,11 +1,11 @@
 import multer from "multer";
 import leaveRequestModel from "../models/leaveRequestmodel.js";
 
-// Optional file upload configuration
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// ================= CREATE LEAVE REQUEST =================
+
 export const createLeaveRequest = async (req, res) => {
   upload.single("attachMents")(req, res, async (err) => {
     if (err) return res.status(500).json({ success: false, message: "File upload error" });
@@ -14,7 +14,7 @@ export const createLeaveRequest = async (req, res) => {
       const { profile, startDate, leaveType, activity, reason } = req.body;
       const attachMents = req.file ? req.file.originalname : req.body.attachMents || "";
 
-      // Validation
+    
       if (!profile || !startDate || !leaveType || !activity || !reason) {
         return res.status(400).json({ success: false, message: "All fields except attachment are required" });
       }
@@ -45,7 +45,6 @@ export const createLeaveRequest = async (req, res) => {
   });
 };
 
-// ================= GET ALL LEAVE REQUESTS =================
 export const getAllLeaveRequests = async (req, res) => {
   try {
     const leaves = await leaveRequestModel.find().sort({ startDate: -1 });
@@ -59,7 +58,7 @@ export const getAllLeaveRequests = async (req, res) => {
   }
 };
 
-// ================= GET LEAVE REQUEST BY ID =================
+
 export const getLeaveRequestById = async (req, res) => {
   try {
     const leave = await leaveRequestModel.findById(req.params.id);
@@ -72,7 +71,7 @@ export const getLeaveRequestById = async (req, res) => {
   }
 };
 
-// ================= UPDATE LEAVE REQUEST =================
+
 export const updateLeaveRequest = async (req, res) => {
   upload.single("attachMents")(req, res, async (err) => {
     if (err) return res.status(500).json({ success: false, message: "File upload error" });
@@ -96,7 +95,7 @@ export const updateLeaveRequest = async (req, res) => {
   });
 };
 
-// ================= DELETE LEAVE REQUEST =================
+
 export const deleteLeaveRequest = async (req, res) => {
   try {
     const deletedLeave = await leaveRequestModel.findByIdAndDelete(req.params.id);

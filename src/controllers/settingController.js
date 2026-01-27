@@ -1,11 +1,11 @@
 import SettingModel from "../models/settingModel.js";
 
-// 1. CREATE - नई सेटिंग्स बनाना
+
 export const createSetting = async (req, res) => {
     try {
         const { userId } = req.body;
 
-        // चेक करें कि क्या इस यूजर की सेटिंग्स पहले से मौजूद हैं
+      
         const existingSetting = await SettingModel.findOne({ userId });
         if (existingSetting) {
             return res.status(400).json({ 
@@ -25,7 +25,7 @@ export const createSetting = async (req, res) => {
     }
 };
 
-// 2. GET ALL - सभी सेटिंग्स की लिस्ट देखना (Admin के लिए)
+
 export const getAllSetting = async (req, res) => {
     try {
         const settings = await SettingModel.find().populate('userId', 'name email');
@@ -35,7 +35,7 @@ export const getAllSetting = async (req, res) => {
     }
 };
 
-// 3. GET BY ID - किसी खास सेटिंग को ID से ढूंढना
+
 export const getSettingById = async (req, res) => {
     try {
         const setting = await SettingModel.findById(req.params.id);
@@ -48,7 +48,7 @@ export const getSettingById = async (req, res) => {
     }
 };
 
-// 4. UPDATE - सेटिंग्स अपडेट करना (Patch Method)
+
 export const updateSetting = async (req, res) => {
     try {
         const updatedSetting = await SettingModel.findByIdAndUpdate(
@@ -71,7 +71,7 @@ export const updateSetting = async (req, res) => {
     }
 };
 
-// 5. DELETE - सेटिंग्स को हटाना
+
 export const deleteSetting = async (req, res) => {
     try {
         const deletedSetting = await SettingModel.findByIdAndDelete(req.params.id);

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const SettingSchema = new mongoose.Schema(
     {
-        // इसे User या Profile से जोड़ने के लिए
+       
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'profile', 
@@ -10,7 +10,7 @@ const SettingSchema = new mongoose.Schema(
             unique: true
         },
 
-        // Notifications Settings
+        
         emailNotifications: {
             type: Boolean,
             default: true
@@ -24,7 +24,7 @@ const SettingSchema = new mongoose.Schema(
             default: false
         },
 
-        // Security Settings
+       
         twoFactor: {
             type: Boolean,
             default: false

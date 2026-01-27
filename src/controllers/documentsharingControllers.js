@@ -1,112 +1,130 @@
-import multer from "multer";
 import DocumentSharingModel from "../models/documentSharingModel.js";
 
-
+/* ================= CREATE ================= */
 export const postDocumentsharing = async (req, res) => {
+  try {
+    // ✅ FRONTEND FIELD NAMES MATCH
+    const { topic, topicDescription, course, teacher } = req.body;
 
-    const ContentType = req.headers["content-type"];
-  
-    if (ContentType && ContentType.includes("multipart/form-data")) {
-
-    try {
-  
-      const {topic, topicDescription, teacher, course } = req.body;
-  
-      if (!topic || !topicDescription ||  !teacher || !course ||!document || !req.imageUrls?.image) {
-        return res.status(400).json({ status: "error", message: "All fields are required" });
-      }
-
-     const document =  req.imageUrls?.image || null
-  
-      const newDocumentsharing = await DocumentSharingModel.create({ topic, topicDescription, teacher, course, document });
-
-      res.status(200).json({ status: "success", message: "Document sharing Detail created successfully!" });
-  
-    } catch (error) {
-      console.error("Error creating Document sharing:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+    if (!topic || !topicDescription || !course || !teacher) {
+      return res.status(400).json({
+        status: "error",
+        message: "All fields are required",
+      });
     }
+
+    // ✅ FILE HANDLE (multer / cloudinary safe)
+    const document =
+      req.imageUrls?.document ||
+      req.file?.path ||
+      null;
+
+    const newDoc = await DocumentSharingModel.create({
+      topic,
+      Description: topicDescription, // 👈 correct mapping
+      course,
+      teacher,
+      document,
+    });
+
+    res.status(201).json({
+      status: "success",
+      message: "Document shared successfully",
+      data: newDoc,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
   }
-  
-  };
+};
 
+/* ================= GET ALL ================= */
+export const getDocumentsharing = async (req, res) => {
+  try {
+    const data = await DocumentSharingModel.find().sort({ createdAt: -1 });
+    res.status(200).json({ status: "success", data });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+};
 
-  export const getDocumentsharing = async (req, res) => {
-    try {
-      const Documentsharing = await DocumentSharingModel.find();
- 
-      res.status(200).json({ status: "success", data: Documentsharing });
-    } catch (error) {
-      console.error("Error fetching Document sharing:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-  };
-
-
+/* ================= GET BY ID ================= */
 export const getDocumentsharingById = async (req, res) => {
-    try {
-      const { id } = req.params; 
+  try {
+    const doc = await DocumentSharingModel.findById(req.params.id);
 
-      const Documentsharing = await DocumentSharingModel.findById(id); 
-  
-      if (!Documentsharing) {
-        return res.status(404).json({ status: "error", message: "document sharing Details not found" });
-      }
-  
-      res.status(200).json({ status: "success", data: Documentsharing });
-    } catch (error) {
-      console.error("Error fetching Documentsharing:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-  };
-
-
-  export const updateDocumentsharing = async (req, res) => {
-
-    const ContentType = req.headers["content-type"];
-  
-    if (ContentType && ContentType.includes("multipart/form-data")) {
-  
-     try {
-
-      const { id } = req.params;
-      const updateData = req.body; 
-
-      if(req.imageUrls) {
-        updateData.document=req.imageUrls?.image
-      }
-
-      const updatedDocumentsharing =  await DocumentSharingModel.updateOne({ _id: id }, { $set: updateData });
-  
-      if (!updatedDocumentsharing) {
-        return res.status(404).json({ status: "error", message: "document sharing Details not found" });
-      }
-  
-      res.status(200).json({ status: "success", message: "document sharing Details updated successfully"});
-
-    } catch (error) {
-      console.error("Error updating Documentsharing:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+    if (!doc) {
+      return res.status(404).json({
+        status: "error",
+        message: "Document not found",
+      });
     }
 
-    }
-  };
+    res.status(200).json({ status: "success", data: doc });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+};
 
-  
-  export const deleteDocumentsharing = async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      const deletedDocumentsharing = await DocumentSharingModel.deleteOne({ _id: id });
-       
-      if (!deletedDocumentsharing) {
-        return res.status(404).json({ status: "error", message: "document sharing Details are not found" });
-      }
-  
-      res.status(200).json({ status: "success", message: "document sharing Details deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting document sharing:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+/* ================= UPDATE ================= */
+export const updateDocumentsharing = async (req, res) => {
+  try {
+    const updateData = { ...req.body };
+
+    if (req.imageUrls?.document) {
+      updateData.document = req.imageUrls.document;
+    } else if (req.file?.path) {
+      updateData.document = req.file.path;
     }
-    
-  };
+
+    // 🔁 description mapping if update comes from frontend
+    if (updateData.topicDescription) {
+      updateData.Description = updateData.topicDescription;
+      delete updateData.topicDescription;
+    }
+
+    const updated = await DocumentSharingModel.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({
+        status: "error",
+        message: "Document not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Document updated successfully",
+      data: updated,
+    });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+};
+
+/* ================= DELETE ================= */
+export const deleteDocumentsharing = async (req, res) => {
+  try {
+    const deleted = await DocumentSharingModel.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        status: "error",
+        message: "Document not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Document deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+};

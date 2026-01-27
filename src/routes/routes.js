@@ -34,13 +34,21 @@ import { createBill, getAllBills, getBillById, updateBill, deleteBill } from '..
 import { createHoliday, getAllHolidays, getHolidayById, updateHoliday, deleteHoliday } from '../controllers/leave-HolidayController.js';
 import { createLeaveRequest, getAllLeaveRequests, getLeaveRequestById, updateLeaveRequest, deleteLeaveRequest } from '../controllers/leaveRequestController.js';
 import { createLeaveStatus, getAllLeaveStatus, getLeaveStatusById, updateLeaveStatus, deleteLeaveStatus } from "../controllers/leaveStatusController.js";
-import { createNotification, getAllNotifications, getNotificationById, updateNotification, deleteNotification } from '../controllers/notificationController.js';
 import { createIncome, getAllIncomes, getIncomeById, updateIncome, deleteIncome } from '../controllers/incomeController.js';
 import { createReceipt, getAllReceipts, getReceiptById, updateReceipt, deleteReceipt } from '../controllers/receiptController.js';
 import { createExpense, getAllExpenses, getExpenseById, updateExpense, deleteExpense } from '../controllers/expenseController.js';
 import { createSetting, getAllSetting, getSettingById, updateSetting, deleteSetting } from '../controllers/settingController.js';
+import {createAttendance,getAllAttendance,getAttendanceById,updateAttendance,deleteAttendance,} from "../controllers/attendanceRequestController.js";
+import {createCertificate,getAllCertificates,updateCertificate,deleteCertificate,} from "../controllers/certificateController.js";
+import {createNotification,getAllNotifications,getNotificationById,updateNotification,deleteNotification,markAsRead} from "../controllers/notificationController.js";
+import {
+  createRole,
+  getAllRoles,
+  updateRole,     
+  deleteRole,
+} from "../controllers/roleController.js";
+import uploadLeave from "../upload/leave.js"; 
 
-import { createRole, getAllRoles, updateRoleStatus, deleteRole } from '../controllers/roleController.js';
 
 const router = express.Router();
 
@@ -48,6 +56,51 @@ const router = express.Router();
 router.route('/login').post(postAdmin);
 router.route('/forgot').post(postForgot);
 router.route('/admin/signup').post(postSignup);
+
+/* =================== NOTIFICATIONS =================== */
+
+router.route("/notifications")
+  .post(verifyToken, createNotification)
+  .get(verifyToken, getAllNotifications);
+
+router.route("/notifications/:id")
+  .get(verifyToken, getNotificationById)
+  .patch(verifyToken, updateNotification)
+  .delete(verifyToken, deleteNotification);
+
+router.put(
+  "/notifications/:id/read",
+  verifyToken,
+  markAsRead
+);
+
+
+
+/* =================== CERTIFICATES =================== */
+router
+  .route("/certificates")
+  .post(verifyToken, createCertificate)
+  .get(verifyToken, getAllCertificates);
+
+router
+  .route("/certificates/:id")
+  .put(verifyToken, updateCertificate)
+  .delete(verifyToken, deleteCertificate);
+
+
+/* =================== ATTENDANCE REQUEST =================== */
+router
+  .route("/attendance-request")
+  .post(verifyToken, createAttendance)
+  .get(verifyToken, getAllAttendance);
+
+router
+  .route("/attendance-request/:id")
+  .get(verifyToken, getAttendanceById)
+  .put(verifyToken, updateAttendance)
+  .delete(verifyToken, deleteAttendance);
+
+
 
 
 /* =================== ACADEMIC MANAGEMENT =================== */
@@ -59,6 +112,9 @@ router.route('/branch/:id')
     .get(verifyToken, getBranchById)
     .put(verifyToken, updateBranch)
     .delete(verifyToken, deleteBranch);
+
+   
+
 
 // Exam
 router.route('/exam')
@@ -145,10 +201,10 @@ router.route('/teacher/:id')
     .delete(verifyToken, deleteTeacher);
 
 // Students
-router.route('/allstudents')
+router.route('/studentlist')
     .post(verifyToken, postAllStudents)
     .get(verifyToken, getAllStudents);
-router.route('/allstudents/:id')
+router.route('/studentlist/:id')
     .get(verifyToken, getAllStudentsById)
     .patch(verifyToken, updateAllStudents)
     .delete(verifyToken, deleteAllStudents);
@@ -203,7 +259,9 @@ router.route('/timetable/:id')
 
 // Profile
 router.route('/profile')
-    .post(verifyToken, uploadProfile, postProfile);
+    .post(verifyToken, uploadProfile, postProfile)
+    .get(verifyToken, getProfile); 
+
 router.route('/profile/:id')
     .get(verifyToken, getProfile)
     .patch(verifyToken, uploadProfile, updateProfile);
@@ -247,14 +305,20 @@ router.route('/leave-request/:id')
     .delete(verifyToken, deleteLeaveRequest);
 
 // Leave Status
-router.route('/leave-status')
-    .post(verifyToken, createLeaveStatus)
-    .get(verifyToken, getAllLeaveStatus);
-router.route('/leave-status/:id')
-    .get(verifyToken, getLeaveStatusById)
-    .patch(verifyToken, updateLeaveStatus)
-    .delete(verifyToken, deleteLeaveStatus);
+router
+  .route("/leave-status")
+  .post(
+    verifyToken,
+    uploadLeave.single("attachments"), 
+    createLeaveStatus
+  )
+  .get(verifyToken, getAllLeaveStatus);
 
+router
+  .route("/leave-status/:id")
+  .get(verifyToken, getLeaveStatusById)
+  .patch(verifyToken, updateLeaveStatus)
+  .delete(verifyToken, deleteLeaveStatus);
 // Notifications
 router.route('/notification')
     .post(verifyToken, createNotification)
@@ -276,14 +340,16 @@ router.route('/setting/:id')
     .patch(verifyToken, uploadNone, updateSetting)
     .delete(verifyToken, deleteSetting);
 
-// Role Management CRUD
-router.route('/roles')
-    .post(verifyToken, uploadNone, createRole)
-    .get(verifyToken, getAllRoles);
+/* ===== ROLE ROUTES ===== */
+router
+  .route("/role")
+  .post(verifyToken, createRole)
+  .get(verifyToken, getAllRoles);
 
-router.route('/roles/:id')
-    .patch(verifyToken, uploadNone, updateRoleStatus)
-    .delete(verifyToken, deleteRole);
+router
+  .route("/role/:id")
+  .patch(verifyToken, updateRole)   
+  .delete(verifyToken, deleteRole);
 
 
 /* =================== SYSTEM TEST =================== */

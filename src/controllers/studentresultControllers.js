@@ -2,12 +2,10 @@ import StudentresultModel from "../models/studentresultModel.js";
 import AllStudentsModel from "../models/allstudentsModels.js";
 import mongoose from "mongoose";
 
-// ID format check karne ke liye utility
+
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-/* ============================
-    ✅ POST STUDENT RESULT
-============================ */
+
 export const postStudentresult = async (req, res) => {
     try {
         const { 
@@ -15,7 +13,6 @@ export const postStudentresult = async (req, res) => {
             marksObtained, totalMarks, passingMarks, status 
         } = req.body;
 
-        // 1. Validation: Sabhi fields zaroori hain
         if (!studentName || !mobileNumber || !resultId || !courseName || !marksObtained || !totalMarks || !passingMarks) {
             return res.status(400).json({ 
                 status: "error", 
@@ -23,7 +20,7 @@ export const postStudentresult = async (req, res) => {
             });
         }
 
-        // 2. Master list mein student check karein
+       
         const existingStudent = await AllStudentsModel.findOne({ mobileNumber });
         if (!existingStudent) {
             return res.status(404).json({ 
@@ -32,7 +29,7 @@ export const postStudentresult = async (req, res) => {
             });
         }
 
-        // 3. Duplicate check: Ek student ka ek hi resultId ke liye result ho sakta hai
+       
         const existingResult = await StudentresultModel.findOne({ mobileNumber, resultId });
         if (existingResult) {
             return res.status(400).json({ 
@@ -43,7 +40,7 @@ export const postStudentresult = async (req, res) => {
 
         const sheet = req.imageUrls?.image || null;
 
-        // 4. Result create karein
+        
         const newResult = await StudentresultModel.create({
             studentName, 
             courseName, 
@@ -68,9 +65,7 @@ export const postStudentresult = async (req, res) => {
     }
 };
 
-/* ============================
-    ✅ GET ALL RESULTS BY RESULT-ID
-============================ */
+
 export const getStudentresult = async (req, res) => {
     try {
         const { resultId } = req.params;
@@ -81,9 +76,7 @@ export const getStudentresult = async (req, res) => {
     }
 };
 
-/* ============================
-    ✅ GET RESULT BY ID & RESULT-ID
-============================ */
+
 export const getStudentresultById = async (req, res) => {
     try {
         const { id, resultId } = req.params;
@@ -102,9 +95,7 @@ export const getStudentresultById = async (req, res) => {
     }
 };
 
-/* ============================
-    ✅ UPDATE STUDENT RESULT
-============================ */
+
 export const updateStudentresult = async (req, res) => {
     try {
         const { id, resultId } = req.params;
@@ -137,9 +128,7 @@ export const updateStudentresult = async (req, res) => {
     }
 };
 
-/* ============================
-    ✅ DELETE STUDENT RESULT
-============================ */
+
 export const deleteStudentresult = async (req, res) => {
     try {
         const { id, resultId } = req.params;

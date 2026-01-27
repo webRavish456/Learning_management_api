@@ -36,7 +36,14 @@ const staffSchema = new mongoose.Schema(
     joiningDate: {
       type: Date,
       required: true,
-    }
+    },
+
+    // ✅ FIXED
+    status: {
+      type: String,
+      enum: ["Active", "Inactive", "Leave"],
+      default: "Active",
+    },
   },
   { timestamps: true }
 );

@@ -1,38 +1,37 @@
 import mongoose from "mongoose";
 
 const documentSharingSchema = new mongoose.Schema(
-   
   {
-  
-    topic: { 
-      type: String, 
+    topic: {
+      type: String,
       required: true,
     },
-  
-    topicDescription: { 
-      type: String, 
+
+    Description: {
+      type: String,
       required: true,
     },
 
     course: {
-      type: String, 
+      type: String,
       required: true,
     },
-  
-    teacher: { 
-      type: String, 
+
+    teacher: {
+      type: String,
       required: true,
     },
 
     document: {
-        type: String, 
+      type: String,
     },
   },
-
   { timestamps: true }
-  
 );
 
-const DocumentSharingModel = mongoose.model('DocumentSharing', documentSharingSchema);
+const DocumentSharingModel = mongoose.model(
+  "DocumentSharing",
+  documentSharingSchema
+);
 
-export default DocumentSharingModel
+export default DocumentSharingModel;

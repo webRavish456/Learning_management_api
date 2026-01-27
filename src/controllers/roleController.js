@@ -1,46 +1,114 @@
 import RoleModel from "../models/roleModel.js";
 
-// 1. Create Role
+/* ================= CREATE ROLE ================= */
 export const createRole = async (req, res) => {
-    try {
-        const { roleName, permissions } = req.body;
-        const newRole = await RoleModel.create({ roleName, permissions });
-        res.status(201).json({ status: "success", data: newRole });
-    } catch (error) {
-        res.status(500).json({ status: "error", message: error.message });
+  try {
+    const { roleName, permissions } = req.body;
+
+    if (!roleName || !roleName.trim()) {
+      return res.status(400).json({
+        status: "error",
+        message: "roleName required",
+      });
     }
+
+    const role = await RoleModel.create({
+      roleName: roleName.trim(),
+      permissions: permissions || [],
+      status: true,
+    });
+
+    return res.status(201).json({
+      status: "success",
+      data: role,
+    });
+  } catch (err) {
+    console.error("CREATE ROLE ERROR 👉", err);
+
+    return res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 };
 
-// 2. Get All Roles
+/* ================= GET ALL ROLES ================= */
 export const getAllRoles = async (req, res) => {
-    try {
-        const roles = await RoleModel.find();
-        res.status(200).json({ status: "success", data: roles });
-    } catch (error) {
-        res.status(500).json({ status: "error", message: error.message });
-    }
+  try {
+    const roles = await RoleModel.find().sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      status: "success",
+      data: roles,
+    });
+  } catch (err) {
+    console.error("GET ROLES ERROR 👉", err);
+
+    return res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 };
 
-// 3. Update Status
-export const updateRoleStatus = async (req, res) => {
-    try {
-        const updatedRole = await RoleModel.findByIdAndUpdate(
-            req.params.id, 
-            { status: req.body.status }, 
-            { new: true }
-        );
-        res.status(200).json({ status: "success", data: updatedRole });
-    } catch (error) {
-        res.status(500).json({ status: "error", message: error.message });
+/* ================= UPDATE ROLE ================= */
+export const updateRole = async (req, res) => {
+  try {
+    const { roleName, permissions, status } = req.body;
+
+    const updatedRole = await RoleModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...(roleName && { roleName: roleName.trim() }),
+        ...(permissions && { permissions }),
+        ...(status !== undefined && { status }),
+      },
+      { new: true }
+    );
+
+    if (!updatedRole) {
+      return res.status(404).json({
+        status: "error",
+        message: "Role not found",
+      });
     }
+
+    return res.status(200).json({
+      status: "success",
+      data: updatedRole,
+    });
+  } catch (err) {
+    console.error("UPDATE ROLE ERROR 👉", err);
+
+    return res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 };
 
-// 4. Delete Role
+/* ================= DELETE ROLE ================= */
 export const deleteRole = async (req, res) => {
-    try {
-        await RoleModel.findByIdAndDelete(req.params.id);
-        res.status(200).json({ status: "success", message: "Role deleted" });
-    } catch (error) {
-        res.status(500).json({ status: "error", message: error.message });
+  try {
+    const deletedRole = await RoleModel.findByIdAndDelete(req.params.id);
+
+    if (!deletedRole) {
+      return res.status(404).json({
+        status: "error",
+        message: "Role not found",
+      });
     }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Role deleted successfully",
+    });
+  } catch (err) {
+    console.error("DELETE ROLE ERROR 👉", err);
+
+    return res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 };

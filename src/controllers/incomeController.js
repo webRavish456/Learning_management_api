@@ -3,7 +3,7 @@ import multer from "multer";
 
 const upload = multer().none();
 
-// 🟢 1. Create Income
+
 export const createIncome = async (req, res) => {
     const saveToDb = async (data) => {
         try {
@@ -36,7 +36,7 @@ export const createIncome = async (req, res) => {
     }
 };
 
-// 🟢 2. Get All Incomes
+
 export const getAllIncomes = async (req, res) => {
     try {
         const data = await Income.find().sort({ createdAt: -1 });
@@ -46,7 +46,6 @@ export const getAllIncomes = async (req, res) => {
     }
 };
 
-// 🟢 3. Update Income
 export const updateIncome = async (req, res) => {
     try {
         const updated = await Income.findByIdAndUpdate(
@@ -60,7 +59,7 @@ export const updateIncome = async (req, res) => {
     }
 };
 
-// 🟢 4. Delete Income
+
 export const deleteIncome = async (req, res) => {
     try {
         await Income.findByIdAndDelete(req.params.id);
@@ -70,7 +69,6 @@ export const deleteIncome = async (req, res) => {
     }
 };
 
-// 🟢 5. Get Single Income (Optional but good for View)
 export const getIncomeById = async (req, res) => {
     try {
         const data = await Income.findById(req.params.id);

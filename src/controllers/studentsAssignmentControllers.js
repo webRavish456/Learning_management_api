@@ -4,8 +4,6 @@ import studentsAssignmentModel from "../models/studentsAssignment.js";
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-/* =================== Helper Function to Save Data =================== */
-// This function handles the actual DB saving to avoid repeating code
 const saveAssignment = async (data, res) => {
   try {
     const { 
@@ -18,7 +16,7 @@ const saveAssignment = async (data, res) => {
       mobileNumber 
     } = data;
 
-    // Minimum required fields based on your Frontend Create.js
+   
     if (!studentName || !assignmentTitle || !dueDate || !status) {
       return res.status(400).json({ 
         status: "error", 
@@ -31,7 +29,6 @@ const saveAssignment = async (data, res) => {
       assignmentTitle,
       dueDate,
       status,
-      // Providing defaults if these are not in your Frontend Form yet
       course: course || "General",
       teacher: teacher || "Staff",
       mobileNumber: mobileNumber || "N/A"
@@ -49,23 +46,20 @@ const saveAssignment = async (data, res) => {
   }
 };
 
-/* =================== POST Assignment =================== */
 export const postStudentsAssignment = async (req, res) => {
   const contentType = req.headers["content-type"];
 
-  // Check if request is Multipart (Form-Data)
   if (contentType && contentType.includes("multipart/form-data")) {
     upload.none()(req, res, async (err) => {
       if (err) return res.status(500).json({ status: "error", message: "Error handling form data" });
       await saveAssignment(req.body, res);
     });
   } else {
-    // Standard JSON Request (From your Create.js fetch)
+   
     await saveAssignment(req.body, res);
   }
 };
 
-/* =================== GET All Assignments =================== */
 export const getStudentsAssignment = async (req, res) => {
   try {
     const studentsAssignments = await studentsAssignmentModel.find().sort({ createdAt: -1 });
@@ -75,7 +69,6 @@ export const getStudentsAssignment = async (req, res) => {
   }
 };
 
-/* =================== GET Assignment By ID =================== */
 export const getStudentsAssignmentById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -90,7 +83,6 @@ export const getStudentsAssignmentById = async (req, res) => {
   }
 };
 
-/* =================== UPDATE Assignment =================== */
 export const updateStudentsAssignment = async (req, res) => {
   const contentType = req.headers["content-type"];
   const { id } = req.params;
@@ -116,7 +108,6 @@ export const updateStudentsAssignment = async (req, res) => {
   }
 };
 
-/* =================== DELETE Assignment =================== */
 export const deleteStudentsAssignment = async (req, res) => {
   try {
     const { id } = req.params;

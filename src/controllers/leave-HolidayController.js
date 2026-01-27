@@ -4,7 +4,7 @@ import Holiday from "../models/leave-holidaymodel.js";
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-/* ================= CREATE HOLIDAY ================= */
+
 export const createHoliday = async (req, res) => {
   const contentType = req.headers["content-type"];
 
@@ -59,21 +59,20 @@ export const createHoliday = async (req, res) => {
   });
 };
 
-/* ================= GET ALL HOLIDAYS ================= */
 export const getAllHolidays = async (req, res) => {
   try {
     const holidays = await Holiday.find().sort({ date: 1 });
 
     res.status(200).json({
       status: "success",
-      data: holidays, // ✅ each item has _id
+      data: holidays, 
     });
   } catch (error) {
     res.status(500).json({ status: "error", message: "Server error" });
   }
 };
 
-/* ================= GET HOLIDAY BY ID ================= */
+
 export const getHolidayById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -88,7 +87,7 @@ export const getHolidayById = async (req, res) => {
 
     res.status(200).json({
       status: "success",
-      data: holiday, // ✅ _id included
+      data: holiday, 
     });
   } catch (error) {
     res.status(400).json({
@@ -98,7 +97,7 @@ export const getHolidayById = async (req, res) => {
   }
 };
 
-/* ================= UPDATE HOLIDAY ================= */
+
 export const updateHoliday = async (req, res) => {
   const contentType = req.headers["content-type"];
 
@@ -135,7 +134,7 @@ export const updateHoliday = async (req, res) => {
         });
       }
 
-      // ✅ Only send success message
+    
       res.status(200).json({
         status: "success",
         message: "Holiday updated successfully"
@@ -148,7 +147,6 @@ export const updateHoliday = async (req, res) => {
 };
 
 
-/* ================= DELETE HOLIDAY ================= */
 export const deleteHoliday = async (req, res) => {
   try {
     const { id } = req.params;

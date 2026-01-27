@@ -1,9 +1,7 @@
 import AllStudentsModel from "../models/allstudentsModels.js";
 import mongoose from "mongoose";
 
-/* ==========================================
-    ✅ CREATE STUDENT (POST)
-========================================== */
+
 export const postAllStudents = async (req, res) => {
     try {
         console.log("Incoming Data:", req.body);
@@ -13,7 +11,7 @@ export const postAllStudents = async (req, res) => {
             gender, address, enrollmentDate, course, status 
         } = req.body;
 
-        // 1. Basic Server-side Validation
+       
         if (!studentName || !emailId || !mobileNumber || !course) {
             return res.status(400).json({ 
                 status: "error", 
@@ -21,7 +19,7 @@ export const postAllStudents = async (req, res) => {
             });
         }
 
-        // 2. Email Uniqueness Check
+      
         const normalizedEmail = emailId.toLowerCase().trim();
         const existingStudent = await AllStudentsModel.findOne({ emailId: normalizedEmail });
         
@@ -32,7 +30,6 @@ export const postAllStudents = async (req, res) => {
             });
         }
 
-        // 3. Database Save
         const newStudent = await AllStudentsModel.create({
             studentName,
             emailId: normalizedEmail,
@@ -45,7 +42,7 @@ export const postAllStudents = async (req, res) => {
             status: status || "Ongoing"
         });
 
-        // ✅ Success Response
+       
         return res.status(201).json({
             status: "success",
             message: "Student record created successfully!",
@@ -61,12 +58,9 @@ export const postAllStudents = async (req, res) => {
     }
 };
 
-/* ==========================================
-    ✅ GET ALL STUDENTS (LIST)
-========================================== */
 export const getAllStudents = async (req, res) => {
     try {
-        // Sorting by newest first (CreatedAt)
+       
         const students = await AllStudentsModel.find().sort({ createdAt: -1 }).lean();
         
         return res.status(200).json({
@@ -80,9 +74,7 @@ export const getAllStudents = async (req, res) => {
     }
 };
 
-/* ==========================================
-    ✅ GET STUDENT BY ID (VIEW)
-========================================== */
+
 export const getAllStudentsById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -103,9 +95,6 @@ export const getAllStudentsById = async (req, res) => {
     }
 };
 
-/* ==========================================
-    ✅ UPDATE STUDENT (PATCH)
-========================================== */
 export const updateAllStudents = async (req, res) => {
     try {
         const { id } = req.params;
@@ -114,7 +103,7 @@ export const updateAllStudents = async (req, res) => {
             return res.status(400).json({ status: "error", message: "Invalid ID provided for update" });
         }
 
-        // Agar email update ho raha hai toh uniqueness check karein
+      
         if (req.body.emailId) {
             const normalizedEmail = req.body.emailId.toLowerCase().trim();
             const emailInUse = await AllStudentsModel.findOne({ 
@@ -148,9 +137,7 @@ export const updateAllStudents = async (req, res) => {
     }
 };
 
-/* ==========================================
-    ✅ DELETE STUDENT (DELETE)
-========================================== */
+
 export const deleteAllStudents = async (req, res) => {
     try {
         const { id } = req.params;

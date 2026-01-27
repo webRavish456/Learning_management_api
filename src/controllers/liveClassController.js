@@ -1,6 +1,6 @@
 import liveClassModel from "../models/liveClassmodel.js";
 
-// 🟢 Create a new live class
+
 export const createLiveClass = async (req, res) => {
   try {
     const { title, description, courseName, teacherName, date, timing, duration, meetingLink } = req.body;
@@ -27,7 +27,7 @@ export const createLiveClass = async (req, res) => {
   }
 };
 
-// 🟢 Get all live classes
+
 export const getAllLiveClasses = async (req, res) => {
   try {
     const classes = await liveClassModel.find().sort({ date: 1 });
@@ -37,7 +37,7 @@ export const getAllLiveClasses = async (req, res) => {
   }
 };
 
-// 🟢 Get live class by ID
+
 export const getLiveClassById = async (req, res) => {
   try {
     const liveClass = await liveClassModel.findById(req.params.id);
@@ -48,7 +48,7 @@ export const getLiveClassById = async (req, res) => {
   }
 };
 
-// 🟢 Update live class
+
 export const updateLiveClass = async (req, res) => {
   try {
     const updatedClass = await liveClassModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -59,7 +59,7 @@ export const updateLiveClass = async (req, res) => {
   }
 };
 
-// 🟢 Delete live class
+
 export const deleteLiveClass = async (req, res) => {
   try {
     const deletedClass = await liveClassModel.findByIdAndDelete(req.params.id);

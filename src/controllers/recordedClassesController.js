@@ -1,12 +1,12 @@
 import recordedClassesModel from "../models/recordedClassesModel.js";
 
-// 1. Create - Fixes "Validation Failed" Errors
+
 export const createRecordedClass = async (req, res) => {
   try {
-    // Frontend से आने वाले डेटा को निकालें
+    
     const { studentName, enrollmentNo, subjectName, teacherName } = req.body;
 
-    // ज़रूरी फील्ड्स की जांच करें
+   
     if (!studentName || !enrollmentNo || !subjectName || !teacherName) {
       return res.status(400).json({ 
         success: false, 
@@ -14,13 +14,13 @@ export const createRecordedClass = async (req, res) => {
       });
     }
 
-    // नया ऑब्जेक्ट बनाएं और मिसिंग फील्ड्स को डिफ़ॉल्ट वैल्यू दें
+    
     const newClassData = {
       studentName,
       enrollmentNo,
       subjectName,
       teacherName,
-      // नीचे दिए गए फील्ड्स आपके मॉडल में 'required' हैं, इसलिए इन्हें खाली नहीं छोड़ सकते
+     
       title: req.body.title || `${subjectName} - ${studentName}`, 
       description: req.body.description || "Recorded class session",
       courseName: req.body.courseName || "General Course",
@@ -39,12 +39,12 @@ export const createRecordedClass = async (req, res) => {
       data: savedClass 
     });
   } catch (error) {
-    // यहाँ आपको पता चलेगा कि कौन सा फील्ड अभी भी मिसिंग है
+    
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// 2. Get All
+
 export const getAllRecordedClasses = async (req, res) => {
   try {
     const classes = await recordedClassesModel.find().sort({ createdAt: -1 });
@@ -54,7 +54,7 @@ export const getAllRecordedClasses = async (req, res) => {
   }
 };
 
-// 3. Get By ID
+
 export const getRecordedClassById = async (req, res) => {
   try {
     const data = await recordedClassesModel.findById(req.params.id);
@@ -65,7 +65,7 @@ export const getRecordedClassById = async (req, res) => {
   }
 };
 
-// 4. Update
+
 export const updateRecordedClass = async (req, res) => {
   try {
     const updated = await recordedClassesModel.findByIdAndUpdate(
@@ -79,7 +79,7 @@ export const updateRecordedClass = async (req, res) => {
   }
 };
 
-// 5. Delete
+
 export const deleteRecordedClass = async (req, res) => {
   try {
     const deleted = await recordedClassesModel.findByIdAndDelete(req.params.id);

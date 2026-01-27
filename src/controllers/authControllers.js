@@ -8,7 +8,7 @@ const upload = multer({ storage: storage });
 
 const secretKey = process.env.JWT_SECRET;
 
-/* =================== 1. SIGNUP (New) =================== */
+
 export const postSignup = async (req, res) => {
   const ContentType = req.headers["content-type"];
 
@@ -23,16 +23,16 @@ export const postSignup = async (req, res) => {
       }
 
       try {
-        // Check if admin already exists
+      
         const existingAdmin = await AdminModel.findOne({ email });
         if (existingAdmin) {
           return res.status(400).json({ status: "error", message: "Admin already exists" });
         }
 
-        // Hash Password
+        
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Save to DB
+      
         await AdminModel.create({ email, password: hashedPassword });
 
         res.status(201).json({ status: "success", message: "Admin Account Created Successfully!" });
@@ -45,7 +45,7 @@ export const postSignup = async (req, res) => {
   }
 };
 
-/* =================== 2. LOGIN =================== */
+
 export const postAdmin = async (req, res) => {
   const ContentType = req.headers["content-type"];
 
@@ -84,7 +84,7 @@ export const postAdmin = async (req, res) => {
   }
 };
 
-/* =================== 3. FORGOT PASSWORD =================== */
+
 export const postForgot = async (req, res) => {
   const ContentType = req.headers["content-type"];
 

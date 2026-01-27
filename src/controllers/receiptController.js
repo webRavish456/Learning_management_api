@@ -1,16 +1,16 @@
 import Receipt from "../models/receiptModel.js";
 import multer from "multer";
 
-// बिना फाइल के फॉर्म-डेटा हैंडल करने के लिए
+
 const upload = multer().none();
 
-// 🟢 1. नई रसीद बनाएँ (Create)
+
 export const createReceipt = async (req, res) => {
   const saveToDb = async (data) => {
     try {
       const { number, amount, date } = data;
 
-      // वैलिडेशन
+     
       if (!number || !amount) {
         return res.status(400).json({ 
           success: false, 
@@ -35,7 +35,7 @@ export const createReceipt = async (req, res) => {
     }
   };
 
-  // Content-Type चेक (JSON vs Form-Data)
+  
   const contentType = req.headers["content-type"] || "";
   if (contentType.includes("multipart/form-data")) {
     upload(req, res, (err) => {
@@ -47,7 +47,7 @@ export const createReceipt = async (req, res) => {
   }
 };
 
-// 🟢 2. सभी रसीदें प्राप्त करें (Get All)
+
 export const getAllReceipts = async (req, res) => {
   try {
     const receipts = await Receipt.find().sort({ createdAt: -1 });
@@ -61,7 +61,7 @@ export const getAllReceipts = async (req, res) => {
   }
 };
 
-// 🟢 3. ID द्वारा रसीद प्राप्त करें (Get Single)
+
 export const getReceiptById = async (req, res) => {
   try {
     const receipt = await Receipt.findById(req.params.id);
@@ -72,7 +72,7 @@ export const getReceiptById = async (req, res) => {
   }
 };
 
-// 🟢 4. रसीद अपडेट करें (Update)
+
 export const updateReceipt = async (req, res) => {
   const updateDb = async (id, data) => {
     try {
@@ -106,7 +106,7 @@ export const updateReceipt = async (req, res) => {
   }
 };
 
-// 🟢 5. रसीद डिलीट करें (Delete)
+
 export const deleteReceipt = async (req, res) => {
   try {
     const deletedReceipt = await Receipt.findByIdAndDelete(req.params.id);

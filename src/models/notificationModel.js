@@ -1,29 +1,34 @@
-// 📂 File: src/models/notificationModel.js
-
 import mongoose from "mongoose";
 
-const notificationSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+const notificationSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+    studentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AllStudents",
+    },
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+      default: "active",
+    },
   },
-  message: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    enum: ["email", "sms", "in-app"],
-    default: "in-app",
-  },
-  receiverEmail: {
-    type: String,
-    required: false,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
-export default mongoose.model("Notification", notificationSchema);
+const NotificationModel = mongoose.model(
+  "Notification",
+  notificationSchema
+);
+
+export default NotificationModel;

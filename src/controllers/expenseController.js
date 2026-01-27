@@ -1,15 +1,15 @@
-import Expense from "../models/expenseModel.js"; // Ensure path and filename match your model
+import Expense from "../models/expenseModel.js"; 
 import multer from "multer";
 
 const upload = multer().none();
 
-// 🟢 1. Create a new Expense
+
 export const createExpense = async (req, res) => {
   const saveToDb = async (data) => {
     try {
       const { item, cost, date } = data;
 
-      // Validation
+     
       if (!item || !cost) {
         return res.status(400).json({ 
           success: false, 
@@ -34,7 +34,7 @@ export const createExpense = async (req, res) => {
     }
   };
 
-  // Support for both JSON and Form-Data
+  
   const contentType = req.headers["content-type"] || "";
   if (contentType.includes("multipart/form-data")) {
     upload(req, res, (err) => {
@@ -46,7 +46,7 @@ export const createExpense = async (req, res) => {
   }
 };
 
-// 🟢 2. Get all Expenses
+
 export const getAllExpenses = async (req, res) => {
   try {
     const expenses = await Expense.find().sort({ createdAt: -1 });
@@ -60,7 +60,7 @@ export const getAllExpenses = async (req, res) => {
   }
 };
 
-// 🟢 3. Get Expense by ID
+
 export const getExpenseById = async (req, res) => {
   try {
     const expense = await Expense.findById(req.params.id);
@@ -71,7 +71,7 @@ export const getExpenseById = async (req, res) => {
   }
 };
 
-// 🟢 4. Update Expense
+
 export const updateExpense = async (req, res) => {
   const updateDb = async (id, data) => {
     try {
@@ -105,7 +105,7 @@ export const updateExpense = async (req, res) => {
   }
 };
 
-// 🟢 5. Delete Expense
+
 export const deleteExpense = async (req, res) => {
   try {
     const deletedExpense = await Expense.findByIdAndDelete(req.params.id);
