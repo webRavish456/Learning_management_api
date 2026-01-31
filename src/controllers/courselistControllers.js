@@ -18,23 +18,22 @@ export const postCourselist = async (req, res) => {
     } = req.body;
 
     /* ===== REQUIRED FIELD CHECK ===== */
-    if (
-      !courseId ||
-      !courseName ||
-      !courseDescription ||
-      !duration ||
-      pricing === undefined
-    ) {
+    if (!courseName || !courseDescription || !duration || pricing === undefined) {
       return res.status(400).json({
         status: "error",
         message:
-          "Required fields: courseId, courseName, courseDescription, duration, pricing",
+          "Required fields: courseName, courseDescription, duration, pricing",
       });
     }
 
+    /* ===== COURSE ID (AUTO IF NOT SENT) ===== */
+    const generatedCourseId =
+      courseId ||
+      `COURSE-${Date.now().toString().slice(-6)}`;
+
     /* ===== DUPLICATE CHECK ===== */
     const existingCourse = await CourseListModel.findOne({
-      $or: [{ courseId }, { courseName }],
+      $or: [{ courseId: generatedCourseId }, { courseName }],
     });
 
     if (existingCourse) {
@@ -50,12 +49,12 @@ export const postCourselist = async (req, res) => {
 
     /* ===== CREATE COURSE ===== */
     const newCourse = await CourseListModel.create({
-      courseId: courseId.trim(),
+      courseId: generatedCourseId.trim(),
       courseName: courseName.trim(),
       courseDescription,
       duration,
       pricing: Number(pricing),
-      assignedTeachers,
+      assignedTeachers: assignedTeachers || "",
       syllabus,
       video: videoFile,
       status: status || "Active",
@@ -126,6 +125,13 @@ export const updateCourselist = async (req, res) => {
     const { id } = req.params;
 
     const updateData = { ...req.body };
+
+    /* ===== REMOVE EMPTY FIELDS ===== */
+    Object.keys(updateData).forEach(
+      (key) =>
+        (updateData[key] === "" || updateData[key] === undefined) &&
+        delete updateData[key]
+    );
 
     /* ===== FILE UPDATES ===== */
     if (req.imageUrls?.image) {

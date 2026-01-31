@@ -8,7 +8,7 @@ const uploadNone = multer().none();
 import uploadProfile from '../upload/profile.js';
 import uploadCourse from '../upload/courseList.js';
 import uploadDocument from '../upload/document.js';
-import uploadTeacher from '../upload/teacher.js';
+import uploadFaculty from '../upload/faculty.js';
 import uploadCertificates from '../upload/certificates.js';
 import uploadStudentresult from '../upload/studentresult.js';
 
@@ -19,7 +19,7 @@ import { postCourselist, getCourselist, getCourselistById, updateCourselist, del
 import { deleteDocumentsharing, getDocumentsharing, getDocumentsharingById, postDocumentsharing, updateDocumentsharing } from '../controllers/documentsharingControllers.js';
 import { deleteAllAssignment, getAllAssignment, getAllAssignmentById, postAllAssignment, updateAllAssignment } from '../controllers/allAssignmentControllers.js';
 import { deleteStudentsAssignment, getStudentsAssignment, getStudentsAssignmentById, postStudentsAssignment, updateStudentsAssignment } from '../controllers/studentsAssignmentControllers.js';
-import { postTeacher, deleteTeacher, getTeacher, getTeacherById, updateTeacher } from '../controllers/teacherControllers.js';
+import { postFaculty, deleteFaculty, getFaculty, getFacultyById, updateFaculty } from '../controllers/facultyControllers.js';
 import { deletedResult, getResult, getResultById, postResult, updatedResult } from '../controllers/resultControllers.js';
 import { deleteAllStudents, getAllStudents, getAllStudentsById, postAllStudents, updateAllStudents } from '../controllers/allstudentsControllers.js';
 import { deleteCertificates, getCertificates, getCertificatesById, postCertificates, updateCertificates } from '../controllers/certificatesControllers.js';
@@ -192,13 +192,13 @@ router.route('/receipt/:id')
 
 /* =================== USER MANAGEMENT =================== */
 // Teacher
-router.route('/teacher')
-    .post(verifyToken, uploadTeacher, postTeacher)
-    .get(verifyToken, getTeacher);
-router.route('/teacher/:id')
-    .get(verifyToken, getTeacherById)
-    .patch(verifyToken, uploadTeacher, updateTeacher)
-    .delete(verifyToken, deleteTeacher);
+router.route('/faculty')
+    .post(verifyToken, uploadFaculty, postFaculty)
+    .get(verifyToken, getFaculty);
+router.route('/faculty/:id')
+    .get(verifyToken, getFacultyById)
+     .patch(verifyToken, updateFaculty)
+    .delete(verifyToken, deleteFaculty);
 
 // Students
 router.route('/studentlist')
