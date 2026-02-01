@@ -1,48 +1,60 @@
 import bcrypt from "bcryptjs";
-import profileModel from "../models/profileModel.js";
-import AdminModel from "../models/adminModel.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import Profile from "../models/profileModel.js";
+import Admin from "../models/adminModel.js";
 
 /* ================= CREATE PROFILE ================= */
 export const postProfile = async (req, res) => {
   try {
+    // 🔍 DEBUG (VERY IMPORTANT)
+    console.log("REQ BODY =>", req.body);
+    console.log("REQ FILE =>", req.file);
+
     const { name, email, mobileNo, address, dob, gender, password } = req.body;
 
-    if (!name || !email || !mobileNo || !password || !dob || !address) {
+    if (!name || !email || !mobileNo || !address || !dob || !gender || !password) {
       return res.status(400).json({
         status: "error",
         message: "All required fields must be filled",
       });
     }
 
-    const existing = await profileModel.findOne({
+    // 🔁 Duplicate check
+    const exists = await Profile.findOne({
       $or: [{ email }, { mobileNo }],
     });
 
-    if (existing) {
+    if (exists) {
       return res.status(400).json({
         status: "error",
         message: "Email or Mobile already exists",
       });
     }
 
+    // 🔐 Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // 🖼 Profile photo
     const profilePhoto =
       req.imageUrls?.image || (req.file ? req.file.path : "");
 
-    const profile = await profileModel.create({
+    // 📦 CREATE PROFILE (MongoDB)
+    const profile = await Profile.create({
       name,
       email,
       mobileNo,
       address,
-      dob,
+      dob: new Date(dob),
       gender,
       password: hashedPassword,
       profilePhoto,
     });
 
-    await AdminModel.create({
+    console.log("PROFILE SAVED =>", profile._id);
+
+    // 👤 Create Admin login
+    await Admin.create({
       email,
       password: hashedPassword,
       userId: profile._id,
@@ -51,10 +63,16 @@ export const postProfile = async (req, res) => {
     return res.status(201).json({
       status: "success",
       message: "Profile created successfully",
-      data: profile,
+      data: {
+        _id: profile._id,
+        name: profile.name,
+        email: profile.email,
+        mobileNo: profile.mobileNo,
+        profilePhoto: profile.profilePhoto,
+      },
     });
   } catch (error) {
-    console.error("Create profile error:", error);
+    console.error("Create Profile Error:", error);
     return res.status(500).json({
       status: "error",
       message: error.message,
@@ -62,17 +80,17 @@ export const postProfile = async (req, res) => {
   }
 };
 
-/* ================= GET ALL PROFILES (LIST) ================= */
+/* ================= GET ALL PROFILES ================= */
 export const getAllProfiles = async (req, res) => {
   try {
-    const profiles = await profileModel.find().select("-password");
+    const profiles = await Profile.find().select("-password");
 
     return res.status(200).json({
       status: "success",
       data: profiles,
     });
   } catch (error) {
-    console.error("Get profiles error:", error);
+    console.error("Get Profiles Error:", error);
     return res.status(500).json({
       status: "error",
       message: "Failed to fetch profiles",
@@ -87,15 +105,15 @@ export const getProfile = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(" ")[1];
 
-    let profile;
+    let profile = null;
 
-    if (id && id.length === 24) {
-      profile = await profileModel.findById(id).select("-password");
+    if (id && mongoose.Types.ObjectId.isValid(id)) {
+      profile = await Profile.findById(id).select("-password");
     } else if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      profile = await profileModel
-        .findOne({ email: decoded.email })
-        .select("-password");
+      profile = await Profile.findOne({ email: decoded.email }).select(
+        "-password"
+      );
     }
 
     if (!profile) {
@@ -110,10 +128,10 @@ export const getProfile = async (req, res) => {
       data: profile,
     });
   } catch (error) {
-    console.error("Get profile error:", error);
-    return res.status(500).json({
+    console.error("Get Profile Error:", error);
+    return res.status(401).json({
       status: "error",
-      message: "Internal server error",
+      message: "Invalid token or server error",
     });
   }
 };
@@ -122,6 +140,17 @@ export const getProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid profile ID",
+      });
+    }
+
+    console.log("UPDATE BODY =>", req.body);
+    console.log("UPDATE FILE =>", req.file);
+
     const updateData = { ...req.body };
 
     if (updateData.password) {
@@ -135,7 +164,7 @@ export const updateProfile = async (req, res) => {
     }
 
     if (updateData.email || updateData.password) {
-      await AdminModel.updateOne(
+      await Admin.updateOne(
         { userId: id },
         {
           $set: {
@@ -146,11 +175,11 @@ export const updateProfile = async (req, res) => {
       );
     }
 
-    const updatedProfile = await profileModel.findByIdAndUpdate(
+    const updatedProfile = await Profile.findByIdAndUpdate(
       id,
       { $set: updateData },
       { new: true }
-    );
+    ).select("-password");
 
     if (!updatedProfile) {
       return res.status(404).json({
@@ -159,13 +188,15 @@ export const updateProfile = async (req, res) => {
       });
     }
 
+    console.log("PROFILE UPDATED =>", updatedProfile._id);
+
     return res.status(200).json({
       status: "success",
       message: "Profile updated successfully",
       data: updatedProfile,
     });
   } catch (error) {
-    console.error("Update profile error:", error);
+    console.error("Update Profile Error:", error);
     return res.status(500).json({
       status: "error",
       message: error.message,
