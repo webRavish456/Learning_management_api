@@ -7,10 +7,10 @@ const documentSharingSchema = new mongoose.Schema(
       required: true,
     },
 
-    Description: {
-      type: String,
-      required: true,
-    },
+   topicDescription: {
+  type: String,
+  required: true,
+},
 
     course: {
       type: String,

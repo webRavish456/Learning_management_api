@@ -1,119 +1,140 @@
-import multer from "multer";
 import CertificatesModel from "../models/certificatesModels.js";
 
-const storage = multer.memoryStorage();
-
-const upload = multer({ storage: storage });
-
+/* ================= CREATE ================= */
 export const postCertificates = async (req, res) => {
+  try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
 
-    const ContentType = req.headers["content-type"];
-  
-    if (ContentType && ContentType.includes("multipart/form-data")) {
-  
-  
-    try {
-  
-      const { studentName, courseName, duration} = req.body;
-  
-      if (!studentName  || !courseName || !duration || !req.imageUrls?.image) {
-        return res.status(400).json({ status: "error", message: "All fields are required" });
-      }
+    const { studentName, courseName, duration } = req.body;
 
-    
-    const certificates = req.imageUrls?.image || null;
-
-      const newCertificates = await CertificatesModel.create({ studentName, courseName,duration, certificates });
-
-      res.status(200).json({ status: "success", message: "Certificates created successfully!" });
-  
-    } catch (error) {
-      console.error("Error creating certificates:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+    if (!studentName || !courseName || !duration) {
+      return res.status(400).json({
+        status: "error",
+        message: "Text fields are missing",
+      });
     }
-    
-    
+
+    if (!req.file) {
+      return res.status(400).json({
+        status: "error",
+        message: "Certificate file is missing",
+      });
+    }
+
+    const newCertificate = await CertificatesModel.create({
+      studentName,
+      courseName,
+      duration,
+      certificates: req.file.originalname,
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: newCertificate,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
   }
-  
-  };
+};
 
 
-  export const getCertificates = async (req, res) => {
-    try {
-      const certificates = await CertificatesModel.find();
-  
-      res.status(200).json({ status: "success", data: certificates });
-    } catch (error) {
-      console.error("Error fetching certificates:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-  };
+/* ================= GET ALL ================= */
+export const getCertificates = async (req, res) => {
+  try {
+    const certificates = await CertificatesModel.find().lean().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      status: "success",
+      data: certificates,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
 
 
+/* ================= GET BY ID ================= */
 export const getCertificatesById = async (req, res) => {
-    try {
-      const { id } = req.params; 
+  try {
+    const certificate = await CertificatesModel.findById(req.params.id);
 
-      const certificates = await CertificatesModel.findById(id); 
-  
-      if (!certificates) {
-        return res.status(404).json({ status: "error", message: "certificates not found" });
-      }
-  
-      res.status(200).json({ status: "success", data: certificates });
-    } catch (error) {
-      console.error("Error fetching certificates:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
-    }
-  };
-
-
-  export const updateCertificates = async (req, res) => {
-
-    const ContentType = req.headers["content-type"];
-  
-    if (ContentType && ContentType.includes("multipart/form-data")) {
-  
-    
-    try {
-      const { id } = req.params;
-      const updateData = req.body; 
-
-      if (req.imageUrls?.image) {
-        updateData.certificates = req.imageUrls.image;
-      }
-
-      const updatedCertificates =  await CertificatesModel.updateOne({ _id: id }, { $set: updateData });
-  
-      if (!updatedCertificates) {
-        return res.status(404).json({ status: "error", message: "Certificates not found" });
-      }
-  
-      res.status(200).json({ status: "success", message: "Certificates updated successfully"});
-
-    } catch (error) {
-      console.error("Error updating certificates:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+    if (!certificate) {
+      return res.status(404).json({
+        status: "error",
+        message: "Certificate not found",
+      });
     }
 
-    }
-  };
+    res.status(200).json({
+      status: "success",
+      data: certificate,
+    });
 
-  
-  export const deleteCertificates = async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      const deletedCertificates = await CertificatesModel.deleteOne({ _id: id });
-       
-      if (deletedCertificates.deletedCount === 0) {
-        return res.status(404).json({ status: "error", message: "Certificates not found" });
-      }
-  
-      res.status(200).json({ status: "success", message: "Certificates deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting certificates:", error);
-      res.status(500).json({ status: "error", message: "Internal server error" });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+
+/* ================= UPDATE ================= */
+export const updateCertificates = async (req, res) => {
+  try {
+    const { studentName, courseName, duration, status } = req.body;
+
+    const updateData = {
+      studentName,
+      courseName,
+      duration,
+      status,
+    };
+
+    if (req.file) {
+      updateData.certificates = req.file.originalname;
     }
-    
-  };
+
+    await CertificatesModel.findByIdAndUpdate(req.params.id, updateData);
+
+    res.status(200).json({
+      status: "success",
+      message: "Certificate updated successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+
+/* ================= DELETE ================= */
+export const deleteCertificates = async (req, res) => {
+  try {
+    await CertificatesModel.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      status: "success",
+      message: "Certificate deleted successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};

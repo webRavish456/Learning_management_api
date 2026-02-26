@@ -3,7 +3,6 @@ import DocumentSharingModel from "../models/documentSharingModel.js";
 /* ================= CREATE ================= */
 export const postDocumentsharing = async (req, res) => {
   try {
-    // ✅ FRONTEND FIELD NAMES MATCH
     const { topic, topicDescription, course, teacher } = req.body;
 
     if (!topic || !topicDescription || !course || !teacher) {
@@ -13,7 +12,6 @@ export const postDocumentsharing = async (req, res) => {
       });
     }
 
-    // ✅ FILE HANDLE (multer / cloudinary safe)
     const document =
       req.imageUrls?.document ||
       req.file?.path ||
@@ -21,7 +19,7 @@ export const postDocumentsharing = async (req, res) => {
 
     const newDoc = await DocumentSharingModel.create({
       topic,
-      Description: topicDescription, // 👈 correct mapping
+      topicDescription,   // ✅ Correct field name
       course,
       teacher,
       document,
@@ -40,15 +38,26 @@ export const postDocumentsharing = async (req, res) => {
   }
 };
 
+
 /* ================= GET ALL ================= */
 export const getDocumentsharing = async (req, res) => {
   try {
-    const data = await DocumentSharingModel.find().sort({ createdAt: -1 });
-    res.status(200).json({ status: "success", data });
+    const data = await DocumentSharingModel
+      .find()
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      status: "success",
+      data,
+    });
   } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
   }
 };
+
 
 /* ================= GET BY ID ================= */
 export const getDocumentsharingById = async (req, res) => {
@@ -62,27 +71,35 @@ export const getDocumentsharingById = async (req, res) => {
       });
     }
 
-    res.status(200).json({ status: "success", data: doc });
+    res.status(200).json({
+      status: "success",
+      data: doc,
+    });
   } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
   }
 };
+
 
 /* ================= UPDATE ================= */
 export const updateDocumentsharing = async (req, res) => {
   try {
-    const updateData = { ...req.body };
+    const { topic, topicDescription, course, teacher } = req.body;
+
+    const updateData = {
+      topic,
+      topicDescription,
+      course,
+      teacher,
+    };
 
     if (req.imageUrls?.document) {
       updateData.document = req.imageUrls.document;
     } else if (req.file?.path) {
       updateData.document = req.file.path;
-    }
-
-    // 🔁 description mapping if update comes from frontend
-    if (updateData.topicDescription) {
-      updateData.Description = updateData.topicDescription;
-      delete updateData.topicDescription;
     }
 
     const updated = await DocumentSharingModel.findByIdAndUpdate(
@@ -104,9 +121,13 @@ export const updateDocumentsharing = async (req, res) => {
       data: updated,
     });
   } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
   }
 };
+
 
 /* ================= DELETE ================= */
 export const deleteDocumentsharing = async (req, res) => {
@@ -125,6 +146,9 @@ export const deleteDocumentsharing = async (req, res) => {
       message: "Document deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
   }
 };

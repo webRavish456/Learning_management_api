@@ -39,7 +39,7 @@ import { createReceipt, getAllReceipts, getReceiptById, updateReceipt, deleteRec
 import { createExpense, getAllExpenses, getExpenseById, updateExpense, deleteExpense } from '../controllers/expenseController.js';
 import { createSetting, getAllSetting, getSettingById, updateSetting, deleteSetting } from '../controllers/settingController.js';
 import {createAttendance,getAllAttendance,getAttendanceById,updateAttendance,deleteAttendance,} from "../controllers/attendanceRequestController.js";
-import {createCertificate,getAllCertificates,updateCertificate,deleteCertificate,} from "../controllers/certificateController.js";
+// import {createCertificate,getAllCertificates,updateCertificate,deleteCertificate,} from "../controllers/certificateController.js";
 import {createNotification,getAllNotifications,getNotificationById,updateNotification,deleteNotification,markAsRead} from "../controllers/notificationController.js";
 import {
   createRole,
@@ -77,16 +77,15 @@ router.put(
 
 
 /* =================== CERTIFICATES =================== */
-router
-  .route("/certificates")
-  .post(verifyToken, createCertificate)
-  .get(verifyToken, getAllCertificates);
 
-router
-  .route("/certificates/:id")
-  .put(verifyToken, updateCertificate)
-  .delete(verifyToken, deleteCertificate);
+router.route('/certificates')
+    .post(verifyToken, uploadCertificates.single("certificates"), postCertificates)
+    .get(verifyToken, getCertificates);
 
+router.route('/certificates/:id')
+    .get(verifyToken, getCertificatesById)
+    .patch(verifyToken, uploadCertificates.single("certificates"), updateCertificates)
+    .delete(verifyToken, deleteCertificates);
 
 /* =================== ATTENDANCE REQUEST =================== */
 router
@@ -106,11 +105,11 @@ router
 /* =================== ACADEMIC MANAGEMENT =================== */
 // Branch
 router.route('/branch')
-    .post(verifyToken, postBranch)
+    .post(verifyToken, uploadNone, postBranch)
     .get(verifyToken, getBranch);
 router.route('/branch/:id')
     .get(verifyToken, getBranchById)
-    .put(verifyToken, updateBranch)
+    .put(verifyToken, uploadNone, updateBranch)
     .delete(verifyToken, deleteBranch);
 
    
@@ -237,15 +236,6 @@ router.route('/studentresult/:id/:resultId')
     .get(verifyToken, getStudentresultById)
     .patch(verifyToken, uploadStudentresult, updateStudentresult)
     .delete(verifyToken, deleteStudentresult);
-
-// Certificates
-router.route('/certificates')
-    .post(verifyToken, uploadCertificates, postCertificates)
-    .get(verifyToken, getCertificates);
-router.route('/certificates/:id')
-    .get(verifyToken, getCertificatesById)
-    .patch(verifyToken, uploadCertificates, updateCertificates)
-    .delete(verifyToken, deleteCertificates);
 
 /* =================== OPERATIONS =================== */
 // Timetable

@@ -3,7 +3,7 @@ import DailyLog from "../models/dailyLog.js";
 
 export const createDailyLog = async (req, res) => {
   try {
-    const { profile, punchedIn, punchedOut, behavior, breakTime, entry } = req.body;
+    const { profile, punchedIn, punchedOut, behavior, breakTime, entry, } = req.body;
 
  
     if (!profile || !punchedIn) {

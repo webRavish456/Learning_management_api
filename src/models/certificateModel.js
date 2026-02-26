@@ -2,15 +2,15 @@ import mongoose from "mongoose";
 
 const certificateSchema = new mongoose.Schema(
   {
-    name: {
+    StudentName: {
       type: String,
       required: true,
     },
-    course: {
+    courseName: {
       type: String,
       required: true,
     },
-    issuer: {
+    Duration: {
       type: String,
       required: true,
     },

@@ -1,18 +1,22 @@
 import Certificate from "../models/certificateModel.js";
 
-/* CREATE */
+/* ================= CREATE ================= */
 export const createCertificate = async (req, res) => {
   try {
-    const { name, course, issuer } = req.body;
+    const { StudentName, courseName, Duration } = req.body;
 
-    if (!name || !course || !issuer) {
+    if (!StudentName || !courseName || !Duration) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    const cert = await Certificate.create({ name, course, issuer });
+    const cert = await Certificate.create({
+      StudentName,
+      courseName,
+      Duration,
+    });
 
     res.status(201).json({
       success: true,
@@ -27,36 +31,81 @@ export const createCertificate = async (req, res) => {
   }
 };
 
-/* GET ALL */
+
+/* ================= GET ALL ================= */
 export const getAllCertificates = async (req, res) => {
   try {
     const certs = await Certificate.find().sort({ createdAt: -1 });
-    res.json({ success: true, data: certs });
+
+    res.status(200).json({
+      success: true,
+      data: certs,
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-/* UPDATE */
+
+/* ================= UPDATE ================= */
 export const updateCertificate = async (req, res) => {
   try {
+    const { StudentName, courseName, Duration } = req.body;
+
     const updated = await Certificate.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      {
+        StudentName,
+        courseName,
+        Duration,
+      },
       { new: true }
     );
-    res.json({ success: true, data: updated });
+
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: "Certificate not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Certificate updated successfully",
+      data: updated,
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-/* DELETE */
+
+/* ================= DELETE ================= */
 export const deleteCertificate = async (req, res) => {
   try {
-    await Certificate.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: "Deleted successfully" });
+    const deleted = await Certificate.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Certificate not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Deleted successfully",
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
